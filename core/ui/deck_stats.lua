@@ -124,12 +124,30 @@ function buildDeckStats_overview(deck)
     local lowest_rounds = deck_stats.records.lowest_round_win
     local highest_score = deck_stats.records.highest_score
 
-    for _, v in ipairs(deck_stats.wins or {}) do
-        total_wins = total_wins + v
+    if SMODS and SMODS.can_load then
+        for _, vvv in pairs(deck_stats.wins_by_key or {}) do
+            total_wins = total_wins + vvv
+        end
+    else
+        for _, vvv in ipairs(deck_stats.wins or {}) do
+            total_wins = total_wins + vvv
+        end
+        for _, vvv in pairs(deck_stats.wins or {}) do
+            total_wins = total_wins + vvv
+        end
     end
 
-    for _, v in ipairs(deck_stats.losses or {}) do
-        total_losses = total_losses + v
+    if SMODS and SMODS.can_load then
+        for _, vvv in pairs(deck_stats.losses_by_key or {}) do
+            total_losses = total_losses + vvv
+        end
+    else
+        for _, vvv in ipairs(deck_stats.losses or {}) do
+            total_losses = total_losses + vvv
+        end
+        for _, vvv in pairs(deck_stats.losses or {}) do
+            total_losses = total_losses + vvv
+        end
     end
 
     local viewed_back = Back(get_deck_from_name(deck))
