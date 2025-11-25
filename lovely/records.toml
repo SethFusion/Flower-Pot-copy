@@ -29,7 +29,7 @@ match_indent = true
 [[patches]]
 [patches.pattern]
 target = "card.lua"
-pattern = '''if self.ability.name == 'Space Joker' and pseudorandom('space') < G.GAME.probabilities.normal/self.ability.extra then'''
+pattern = '''if self.ability.name == 'Space Joker' and SMODS.pseudorandom_probability(self, 'space', 1, self.ability.extra) then'''
 position = "after"
 payload = '''
     G.GAME.FLOWPOT = G.GAME.FLOWPOT or {}
