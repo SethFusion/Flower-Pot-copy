@@ -29,7 +29,8 @@ FlowerPot.addRecord({
         "j_trousers",
         "j_bootstraps",
         "j_abstract",
-        "j_erosion"
+        "j_erosion",
+        "j_swashbuckler"
     },
     default = 0,
     add_tooltips = function(self, info_queue, card_progress, card)
@@ -54,6 +55,8 @@ FlowerPot.addRecord({
         "j_glass",
         "j_caino",
         "j_yorick",
+        "j_stencil",
+        "j_hit_the_road",
     },
     default = 1,
     add_tooltips = function(self, info_queue, card_progress, card)
@@ -107,27 +110,63 @@ FlowerPot.addRecord({
 -- Edits to above records for specific jokers
 -- chips
 FlowerPot.rev_lookup_records["j_bull"].check_record = function(self, card)
-    return card.ability.extra*math.max(0,(to_number(G.GAME and G.GAME.dollars) + (G.GAME and G.GAME.dollar_buffer or 0)))
+    if next(SMODS.find_card('j_bull', true)) then 
+        return card.ability.extra*math.max(0,(to_number(G.GAME and G.GAME.dollars) + (G.GAME and G.GAME.dollar_buffer or 0)))
+    end
+    return 0
 end
 FlowerPot.rev_lookup_records["j_stone"].check_record = function(self, card)
-    return card.ability.extra*(card.ability.stone_tally or 0)
+    if next(SMODS.find_card('j_stone', true)) then 
+        return card.ability.extra*(card.ability.stone_tally or 0)
+    end
+    return 0
 end
 
 -- mult
 FlowerPot.rev_lookup_records["j_fortune_teller"].check_record = function(self, card)
-    return (G.GAME and G.GAME.consumeable_usage_total or {}).tarot
+    if next(SMODS.find_card('j_fortune_teller', true)) then 
+        return (G.GAME and G.GAME.consumeable_usage_total or {}).tarot
+    end
+    return 0
 end
 FlowerPot.rev_lookup_records["j_bootstraps"].check_record = function(self, card)
-    return card.ability.extra.mult*math.floor((to_number(G.GAME.dollars) + (G.GAME.dollar_buffer or 0))/card.ability.extra.dollars)
+    if next(SMODS.find_card('j_bootstraps', true)) then 
+        return card.ability.extra.mult*math.floor((to_number(G.GAME.dollars) + (G.GAME.dollar_buffer or 0))/card.ability.extra.dollars)
+    end
+    return 0
 end
 FlowerPot.rev_lookup_records["j_abstract"].check_record = function(self, card)
-    return (G.jokers and #G.jokers.cards or 0)*card.ability.extra
+    if next(SMODS.find_card('j_abstract', true)) then 
+        return (G.jokers and #G.jokers.cards or 0)*card.ability.extra
+    end
+    return 0
 end
 FlowerPot.rev_lookup_records["j_erosion"].check_record = function(self, card)
-    return math.max(0,card.ability.extra*(G.playing_cards and (G.GAME.starting_deck_size - #G.playing_cards) or 0))
+    if next(SMODS.find_card('j_erosion', true)) then 
+        return math.max(0,card.ability.extra*(G.playing_cards and (G.GAME.starting_deck_size - #G.playing_cards) or 0))
+    end
+    return 0
+end
+FlowerPot.rev_lookup_records["j_swashbuckler"].check_record = function(self, card)
+    if next(SMODS.find_card('j_swashbuckler', true)) then 
+        return card.ability.mult
+    end
+    return 0
 end
 
 -- xmult
+FlowerPot.rev_lookup_records["j_stencil"].check_record = function(self, card)
+    if next(SMODS.find_card('j_stencil', true)) then 
+        return card.ability.extra.x_mult
+    end
+    return 0
+end
+FlowerPot.rev_lookup_records["j_throwback"].check_record = function(self, card)
+    if next(SMODS.find_card('j_throwback', true)) then 
+        return card.ability.x_mult
+    end
+    return 0
+end
 FlowerPot.rev_lookup_records["j_steel_joker"].check_record = function(self, card)
     return 1 + card.ability.extra*(card.ability.steel_tally or 0)
 end
@@ -143,7 +182,10 @@ FlowerPot.rev_lookup_records["j_rocket"].check_record = function(self, card)
 end
 FlowerPot.rev_lookup_records["j_cloud_9"].default = 4
 FlowerPot.rev_lookup_records["j_cloud_9"].check_record = function(self, card)
-    return card.ability.extra*(card.ability.nine_tally or 0)
+    if next(SMODS.find_card('j_cloud_9', true)) then 
+        return card.ability.extra*(card.ability.nine_tally or 0)
+    end
+    return 0
 end
 
 function FlowerPot.update_record(card_key, record_key, value)
