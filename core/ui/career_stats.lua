@@ -1,4 +1,4 @@
--- Poker hand stats
+-- Career stats
 G.FUNCS.career_stats = function(e)
     G.SETTINGS.paused = true
     G.FUNCS.overlay_menu{
@@ -86,39 +86,6 @@ function create_UIBox_career_stats_row(career_stat)
             {n=G.UIT.C, config={align = "cm", padding = 0.05, r = 0.1, minw = score_w, maxw = score_w}, nodes=row_data},
         }},
     }}
-end
-
-function aaacreate_UIBox_high_scores_row(score)
-  if score == 'poker_hand' then 
-    local handname, amount = localize('k_none'), 0
-    for k, v in pairs(G.PROFILES[G.SETTINGS.profile].hand_usage) do if v.count > amount then handname = v.order; amount = v.count end end
-    score_tab = {
-      {n=G.UIT.O, config={object = DynaText({string = {amount < 1 and handname or localize(handname,'poker_hands')}, colours = {G.C.WHITE},shadow = true, float = true, scale = 0.55})}},
-      {n=G.UIT.T, config={text = " ("..amount..")", scale = 0.45, colour = G.C.JOKER_GREY}}
-    }
-  elseif score == 'hand' then 
-    local chip_sprite = Sprite(0,0,0.4,0.4,G.ASSET_ATLAS["ui_"..(G.SETTINGS.colourblind_option and 2 or 1)], {x=0, y=0})
-    chip_sprite.states.drag.can = false
-    score_tab = {
-      {n=G.UIT.C, config={align = "cm"}, nodes={
-        {n=G.UIT.O, config={w=0.4,h=0.4 , object = chip_sprite}}
-      }},
-      {n=G.UIT.C, config={align = "cm"}, nodes={
-        {n=G.UIT.O, config={object = DynaText({string = {number_format(G.PROFILES[G.SETTINGS.profile].high_scores[score].amt)}, colours = {G.C.RED},shadow = true, float = true, scale = math.min(0.75, score_number_scale(1.5, G.PROFILES[G.SETTINGS.profile].high_scores[score].amt))})}},
-      }},
-    }
-  elseif score == 'collection' then 
-    score_tab = {
-      {n=G.UIT.C, config={align = "cm"}, nodes={
-        {n=G.UIT.O, config={object = DynaText({string = {'%'..math.floor(0.01+100*G.PROFILES[G.SETTINGS.profile].high_scores[score].amt/G.PROFILES[G.SETTINGS.profile].high_scores[score].tot)}, colours = {G.C.WHITE},shadow = true, float = true, scale = math.min(0.75, score_number_scale(1.5, G.PROFILES[G.SETTINGS.profile].high_scores[score].amt))})}},
-        {n=G.UIT.T, config={text = " ("..G.PROFILES[G.SETTINGS.profile].high_scores[score].amt..'/'..G.PROFILES[G.SETTINGS.profile].high_scores[score].tot..")", scale = 0.45, colour = G.C.JOKER_GREY}}
-      }},
-    }
-  else
-    score_tab = {
-      {n=G.UIT.O, config={object = DynaText({string = {number_format(G.PROFILES[G.SETTINGS.profile].high_scores[score].amt)}, colours = {G.C.FILTER},shadow = true, float = true, scale = score_number_scale(0.85, G.PROFILES[G.SETTINGS.profile].high_scores[score].amt)})}},
-    }
-  end
 end
 
 G.FUNCS.career_stats_page = function(args)
