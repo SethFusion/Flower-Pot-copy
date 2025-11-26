@@ -3,6 +3,148 @@ version = "1.0.0"
 dump_lua = true
 priority = 0
 
+#-------------------------------------------------------------
+# Patches to add new individual career stats and ways to track them
+
+# patch to add new high scores to profile
+[[patches]]
+[patches.pattern]
+target = 'game.lua'
+pattern = '''high_scores = {'''
+position = 'after'
+match_indent = true
+payload = '''-- flower_patch
+    -- FLOWER_TARGET_HIGH_SCORE
+	largest_deck = { label = 'Largest Deck', amt = 52 },
+    smallest_deck = { label = 'Smallest Deck', amt = 52 },
+    largest_debt = { label = 'Most Debt', amt = 0 },
+-- / flower_patch'''
+
+# patch to add new career stats to profile
+[[patches]]
+[patches.pattern]
+target = 'game.lua'
+pattern = '''career_stats = {'''
+position = 'after'
+match_indent = true
+payload = '''-- flower_patch
+    -- FLOWER_TARGET_CAREER_STAT
+    c_ethereal_used = 0,
+    c_ethereal_bought = 0,
+    c_spectral_cards_used = 0,
+    c_spectral_bought = 0,
+    c_buffoon_used = 0,
+    c_buffoon_bought = 0,
+    c_standard_used = 0,
+    c_standard_bought = 0,
+    c_tarot_cards_used = 0,
+    c_tarot_reading_bought = 0,
+    c_planet_cards_used = 0,
+    c_planetarium_bought = 0,
+	c_wheel_nope_count = 0,
+	c_wheel_bless_count = 0,
+	c_lucky_money_total = 0,
+-- / flower_patch'''
+
+# patch SMODS pseudorandom_probability for wheel of fortune career stat tracking
+[[patches]]
+[patches.pattern]
+target = '=[SMODS _ "src/utils.lua"]'
+pattern = '''local multi = pseudorandom(seed..'_multi') < numerator/denominator'''
+position = 'before'
+match_indent = true
+payload = '''-- flower_patch
+if seed == 'wheel_of_fortune' then
+  if result then
+    inc_career_stat('c_wheel_bless_count', 1)
+  else
+    inc_career_stat('c_wheel_nope_count', 1)
+  end
+end
+-- / flower_patch'''
+
+# patch lucky card to count total money earned
+[[patches]]
+[patches.pattern]
+target = 'card.lua'
+pattern = '''if SMODS.pseudorandom_probability(self, 'lucky_money', 1, 15) then'''
+position = 'after'
+match_indent = true
+payload = '''   -- flower_patch
+	inc_career_stat('c_lucky_money_total', self.ability.p_dollars)
+    -- / flower_patch'''
+
+# patch to remove booster bought increment from only triggering if booster was not skipped
+[[patches]]
+[patches.pattern]
+target = 'functions/button_callbacks.lua'
+pattern = '''if prev_state == G.STATES.SMODS_BOOSTER_OPENED and booster_obj.name:find('Arcana') then inc_career_stat('c_tarot_reading_used', 1) end
+                      if prev_state == G.STATES.SMODS_BOOSTER_OPENED and booster_obj.name:find('Celestial') then inc_career_stat('c_planetarium_used', 1) end'''
+position = 'at'
+match_indent = true
+payload = '''-- flower_patch
+-- / flower_patch'''
+
+# patch to add consumables bought from shop tracker
+[[patches]]
+[patches.pattern]
+target = 'functions/button_callbacks.lua'
+pattern = '''inc_career_stat('c_tarots_bought', 1)'''
+position = 'after'
+match_indent = true
+payload = '''-- flower_patch
+elseif c1.config.center.set == 'Spectral' then inc_career_stat('c_spectral_bought', 1)
+-- FLOWER_TARGET_INC_CUSTOM_CONSUMABLE_BOUGHT
+-- / flower_patch'''
+
+# patch to add boosters bought/used tracker
+[[patches]]
+[patches.pattern]
+target = 'functions/button_callbacks.lua'
+pattern = '''if not card.from_tag then'''
+position = 'at'
+match_indent = true
+payload = '''-- flower_patch
+if card.label:find('Arcana') then inc_career_stat('c_tarot_reading_used', 1)
+elseif card.label:find('Celestial') then inc_career_stat('c_planetarium_used', 1)
+elseif card.label:find('Spectral') then inc_career_stat('c_ethereal_used', 1)
+elseif card.label:find('Buffoon') then inc_career_stat('c_buffoon_used', 1)
+elseif card.label:find('Standard') then inc_career_stat('c_standard_used', 1)
+-- FLOWER_TARGET_INC_CUSTOM_BOOSTER_USED
+end
+if not card.from_tag then 
+  if card.label:find('Arcana') then inc_career_stat('c_tarot_reading_bought', 1)
+  elseif card.label:find('Celestial') then inc_career_stat('c_planetarium_bought', 1)
+  elseif card.label:find('Spectral') then inc_career_stat('c_ethereal_bought', 1)
+  elseif card.label:find('Buffoon') then inc_career_stat('c_buffoon_bought', 1)
+  elseif card.label:find('Standard') then inc_career_stat('c_standard_bought', 1)
+  -- FLOWER_TARGET_INC_CUSTOM_BOOSTER_BOUGHT
+  end
+-- / flower_patch'''
+
+# patch to add consumable use tracker
+[[patches]]
+[patches.pattern]
+target = 'card.lua'
+pattern = '''end    if self.ability.consumeable.mod_conv or self.ability.consumeable.suit_conv then'''
+position = 'at'
+match_indent = true
+payload = '''-- flower_patch
+end
+if self.ability.set == 'Tarot' then inc_career_stat('c_tarot_cards_used', 1)
+elseif self.ability.set == 'Planet' then inc_career_stat('c_planet_cards_used', 1)
+elseif self.ability.set == 'Spectral' then inc_career_stat('c_spectral_cards_used', 1)
+-- FLOWER_TARGET_CUSTOM_CONSUMABLE_USE
+end
+if self.ability.consumeable.mod_conv or self.ability.consumeable.suit_conv then
+-- / flower_patch'''
+
+
+
+
+#-------------------------------------------------------------
+# Additional Patches 
+
 [[patches]]
 [patches.pattern]
 target = "functions/common_events.lua"

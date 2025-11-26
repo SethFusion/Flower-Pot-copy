@@ -13,6 +13,7 @@ function create_UIBox_high_scores()
         create_UIBox_high_scores_row("poker_hand"),
         create_UIBox_high_scores_row("most_money"),
         create_UIBox_high_scores_row("win_streak"),
+        UIBox_button({button = 'career_stats', label = {localize('b_flowpot_career_stats')}, minw = 7.5, minh = 0.75, focus_args = {nav = 'wide'}}),
     }
     G.focused_profile = G.SETTINGS.profile
     local cheevs = {}

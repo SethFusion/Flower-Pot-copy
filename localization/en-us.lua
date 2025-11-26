@@ -5,6 +5,7 @@ return {
             b_flowpot_create_profile_stats = "Create Profile Stat Files",
             b_flowpot_poker_hand_stats = "Poker Hand Stats",
             b_flowpot_deck_stats = "Deck Stats",
+            b_flowpot_career_stats = "More Career Stats",
             b_flowpot_deck_records = "Deck Records",
             b_flowpot_stat_types = "Stat Types",
             b_flowpot_consumable_types = "Card Types",
@@ -32,7 +33,55 @@ return {
                 "Run + Collections",
                 "Collections",
                 "Never"
-            }
+            },
+
+            c_blank_row = nil,
+            c_wins = "Total Wins",
+            c_losses = "Total Losses",
+            c_win_rate = "Win Rate",
+            c_rounds = "Total Rounds Played",
+            c_hands_played = "Total Hands Played",
+            c_cards_played = "Total Cards Played",
+            c_face_cards_played = "Face Cards Played",
+            c_cards_discarded = "Total Cards Discarded",
+            c_shop_rerolls = "Shop Rerolls",
+            c_dollars_earned = "Dollars Earned",
+            c_shop_dollars_spent = "Money Spent in Shop",
+            c_lucky_money_total = "$ Earned from Lucky Cards",
+            c_round_interest_cap_streak = "Round Interest Cap Streak",
+            c_jokers_sold = "Jokers Sold",
+            c_cards_sold = "Cards Sold",
+            c_single_hand_round_streak = "Single Hand Round Streak",
+
+        	c_wheel_nope_count = "Wheel of Fortune \"Nope!\"s",
+        	c_wheel_bless_count = "Wheel of Fortune Blessings",
+        	
+            c_tarot_cards_used = "Tarot Cards Used",
+            c_tarots_bought = "Tarot Cards Bought",
+            c_tarot_reading_used = "Arcana Packs Opened",
+            c_tarot_reading_bought = "Arcana Packs Bought",
+
+            c_planet_cards_used = "Planet Cards Used",
+            c_planets_bought = "Planet Cards Bought",
+            c_planetarium_used = "Celestial Packs Opened",
+            c_planetarium_bought = "Celestial Packs Bought",
+
+            c_spectral_cards_used = "Spectral Cards Used",
+            c_spectral_bought = "Spectral Cards Bought",
+            c_ethereal_used = "Spectral Packs Opened",
+            c_ethereal_bought = "Spectral Packs Bought",
+
+            c_buffoon_used = "Buffoon Packs Opened",
+            c_buffoon_bought = "Buffoon Packs Bought",
+            c_standard_used = "Standard Packs Opened",
+            c_standard_bought = "Standard Packs Bought",
+
+            c_playing_cards_bought = "Playing Cards Bought",
+            c_vouchers_bought = "Vouchers Redeemed",
+            c_boosters_used = "Booster Packs Opened",
+            c_boosters_bought = "Booster Packs Bought",
+
+            c_tags_used = "Tags Redeemed",
         },
         v_dictionary = {
             b_flowpot_num_rounds = "#1# Rounds",

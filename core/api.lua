@@ -79,3 +79,22 @@ function FlowerPot.addRecord(record)
 
     FlowerPot.records[record.key:lower()] = record
 end
+
+-- key: REQUIRED. the key value of BOTH the dictionary string, which appears as the label, and the key of the G.GAME.career_stats
+--      value you want to display. These two values must be the same. 
+-- str_color. OPTIONAL. Use a G.C. color or a hex value. Default depends on str_type
+-- str_type. OPTIONAL. Use one of these values: "number", "string", "money", "blank"
+--      OR declare a function that has no parameters and returns a number
+--      blank skips a row, allowing you to keep similar stats grouped together, use c_blank_row as key
+FlowerPot.carrer_records = {}
+function FlowerPot.addCareerRecord(key, str_color, str_type)
+    if not key then return end
+    if type(key) == "table" then return end
+    if not str_type then str_type = "number" end
+    if not str_color then 
+        if str_type == "money" then str_color = G.C.MONEY 
+        else str_color = G.C.WHITE end
+    end
+
+    table.insert(FlowerPot.carrer_records, { key, str_color, str_type })
+end

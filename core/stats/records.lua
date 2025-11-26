@@ -221,3 +221,56 @@ function Card:calculate_joker(context)
     end
     return ret, callback
 end
+
+
+FlowerPot.addCareerRecord("c_wins", G.C.BLUE)
+FlowerPot.addCareerRecord("c_losses", G.C.RED)
+FlowerPot.addCareerRecord("c_win_rate", G.C.IMPORTANT, function() return G.PROFILES[G.SETTINGS.profile].career_stats["c_wins"] / G.PROFILES[G.SETTINGS.profile].career_stats["c_losses"] end)
+FlowerPot.addCareerRecord("c_rounds")
+FlowerPot.addCareerRecord("c_hands_played")
+FlowerPot.addCareerRecord("c_cards_played")
+FlowerPot.addCareerRecord("c_face_cards_played")
+FlowerPot.addCareerRecord("c_cards_discarded")
+--pg1
+FlowerPot.addCareerRecord("c_dollars_earned", nil, "money")
+FlowerPot.addCareerRecord("c_lucky_money_total", nil, "money")
+FlowerPot.addCareerRecord("c_vouchers_bought")
+FlowerPot.addCareerRecord("c_shop_dollars_spent", nil, "money")
+FlowerPot.addCareerRecord("c_shop_rerolls", G.C.GREEN)
+FlowerPot.addCareerRecord("c_cards_sold", G.C.JOKER_GREY)
+FlowerPot.addCareerRecord("c_jokers_sold", G.C.JOKER_GREY)
+FlowerPot.addCareerRecord("c_blank_row")
+--pg2
+FlowerPot.addCareerRecord("c_tarot_cards_used", G.C.SECONDARY_SET.Tarot)
+FlowerPot.addCareerRecord("c_tarots_bought", G.C.SECONDARY_SET.Tarot)
+FlowerPot.addCareerRecord("c_tarot_reading_used", G.C.SECONDARY_SET.Tarot)
+FlowerPot.addCareerRecord("c_tarot_reading_bought", G.C.SECONDARY_SET.Tarot)
+FlowerPot.addCareerRecord("c_planet_cards_used", G.C.SECONDARY_SET.Planet)
+FlowerPot.addCareerRecord("c_planets_bought", G.C.SECONDARY_SET.Planet)
+FlowerPot.addCareerRecord("c_planetarium_used", G.C.SECONDARY_SET.Planet)
+FlowerPot.addCareerRecord("c_planetarium_bought", G.C.SECONDARY_SET.Planet)
+--pg3
+FlowerPot.addCareerRecord("c_spectral_cards_used", G.C.SECONDARY_SET.Spectral)
+FlowerPot.addCareerRecord("c_spectral_bought", G.C.SECONDARY_SET.Spectral)
+FlowerPot.addCareerRecord("c_ethereal_used", G.C.SECONDARY_SET.Spectral)
+FlowerPot.addCareerRecord("c_ethereal_bought", G.C.SECONDARY_SET.Spectral)
+FlowerPot.addCareerRecord("c_playing_cards_bought", G.C.ORANGE)
+FlowerPot.addCareerRecord("c_standard_used", G.C.ORANGE)
+FlowerPot.addCareerRecord("c_standard_bought", G.C.ORANGE)
+FlowerPot.addCareerRecord("c_blank_row")
+--pg4
+FlowerPot.addCareerRecord("c_buffoon_used", G.C.SECONDARY_SET.Voucher)
+FlowerPot.addCareerRecord("c_buffoon_bought", G.C.SECONDARY_SET.Voucher)
+
+
+--FlowerPot.addCareerRecord("c_boosters_bought")
+--FlowerPot.addCareerRecord("c_boosters_used", G.C.SECONDARY_SET.Voucher)
+
+
+FlowerPot.addCareerRecord("c_wheel_bless_count", G.C.IMPORTANT)
+FlowerPot.addCareerRecord("c_wheel_nope_count", G.C.IMPORTANT)
+FlowerPot.addCareerRecord("c_single_hand_round_streak")
+FlowerPot.addCareerRecord("c_round_interest_cap_streak")   
+--pg4
+--FlowerPot.addCareerRecord("c_string_test", nil, "string") 
+--FlowerPot.addCareerRecord("c_blank_row", nil, "blank")
