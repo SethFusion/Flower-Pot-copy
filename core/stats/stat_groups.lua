@@ -72,7 +72,6 @@ for i, v in ipairs({
                     end
                 end
                 table.sort(data_table, function (a, b) return a.count > b.count end )
-
                 return data_table
             end
         end,
@@ -94,6 +93,61 @@ for i, v in ipairs({
         }
     })
 end
+
+local tag_usage = "tag_usage"
+FlowerPot.addStatGroup({
+    key = tag_usage,
+    folder_dir = {"Cards"},
+    file_name = tag_usage, 
+    stat_set = "Tag",
+    create_data_table = function(self, format)
+        local card_type_stats = copy_table(G.PROFILES[G.SETTINGS.profile][tag_usage])
+        local data_table = {}
+        if next(card_type_stats) then
+
+            for k, vv in pairs(card_type_stats) do
+                --print(card_type_stats)
+                if G.P_TAGS[k] then
+                    local card_table = vv
+                    card_table["key"] = k
+                    card_table["name"] = localize{type = 'name_text', key = k, set = self.stat_set}
+
+                    data_table[#data_table+1] = card_table
+                end
+            end
+            --print(data_table)
+            table.sort(data_table, function (a, b) return a.count > b.count end )
+        end
+        return data_table
+    end
+})
+
+local blind_usage = "blind_usage"
+FlowerPot.addStatGroup({
+    key = blind_usage,
+    folder_dir = {"Cards"},
+    file_name = blind_usage, 
+    stat_set = "Blind",
+    create_data_table = function(self, format)
+        local card_type_stats = copy_table(G.PROFILES[G.SETTINGS.profile][blind_usage])
+        local data_table = {}
+        if next(card_type_stats) then
+            for k, vv in pairs(card_type_stats) do
+                if G.P_BLINDS[k] then
+                    local card_table = vv
+                    card_table["key"] = k
+                    card_table["name"] = localize{type = 'name_text', key = k, set = self.stat_set}
+                    card_table.times_lost = nil
+                    card_table.times_won = nil
+
+                    data_table[#data_table+1] = card_table
+                end
+            end
+            table.sort(data_table, function (a, b) return a.count > b.count end )
+        end
+        return data_table
+    end
+})
 
 FlowerPot.stat_types["times_used"].valid_stat_groups["consumeable_usage"] = true
 FlowerPot.addStatGroup({
@@ -229,10 +283,10 @@ FlowerPot.addStatType({
 })
 
 FlowerPot.addStatType({
-    key = "times_redeemed",
+    key = "times_redeemed_v",
     display_txt = {
         button = "b_flowpot_times_redeemed_short",
-        full = "k_flowpot_times_redeemed_expand",
+        full = "k_flowpot_times_voucher_redeemed_expand",
     },
     valid_stat_groups = {["voucher_usage"] = true},
     create_stat_table = function(self, stat_group_info)
@@ -253,5 +307,53 @@ FlowerPot.addStatType({
             total_wins = total_wins + v
         end
         return {key = stat_group_info.key, count = stat_group_info.total_wins or total_wins}
+    end,
+})
+
+FlowerPot.addStatType({
+    key = "times_redeemed_t",
+    display_txt = {
+        button = "b_flowpot_times_redeemed_short",
+        full = "k_flowpot_times_tag_redeemed_expand",
+    },
+    valid_stat_groups = {["tag_usage"] = true},
+    create_stat_table = function(self, stat_group_info)
+        return {key = stat_group_info.key, count = stat_group_info.count}
+    end,
+})
+
+FlowerPot.addStatType({
+    key = "times_faced",
+    display_txt = {
+        button = "b_flowpot_times_faced_short",
+        full = "k_flowpot_times_faced_long",
+    },
+    valid_stat_groups = {["blind_usage"] = true},
+    create_stat_table = function(self, stat_group_info)
+        return {key = stat_group_info.key, count = stat_group_info.count}
+    end,
+})
+
+FlowerPot.addStatType({
+    key = "times_won",
+    display_txt = {
+        button = "b_flowpot_times_won_short",
+        full = "k_flowpot_times_won_long",
+    },
+    valid_stat_groups = {["blind_usage"] = true},
+    create_stat_table = function(self, stat_group_info)
+        return {key = stat_group_info.key, count = stat_group_info.wins}
+    end,
+})
+
+FlowerPot.addStatType({
+    key = "times_lost",
+    display_txt = {
+        button = "b_flowpot_times_lost_short",
+        full = "k_flowpot_times_lost_long",
+    },
+    valid_stat_groups = {["blind_usage"] = true},
+    create_stat_table = function(self, stat_group_info)
+        return {key = stat_group_info.key, count = stat_group_info.losses}
     end,
 })

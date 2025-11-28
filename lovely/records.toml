@@ -149,9 +149,32 @@ position = 'after'
 match_indent = true
 payload = '''    -- flower_patch
     inc_career_stat('c_tags_used', 1)
+    set_tag_usage(self)
     local custom_args = {}
     -- FLOWER_TARGET_TAG_USED_UNLOCK_CONDITION
     check_for_unlock({type = 'tag_used', custom_args = custom_args})
+    -- / flower_patch'''
+
+# patch to add blind counter for win
+[[patches]]
+[patches.pattern]
+target = 'functions/state_events.lua'
+pattern = '''G.GAME.unused_discards = (G.GAME.unused_discards or 0) + G.GAME.current_round.discards_left'''
+position = 'before'
+match_indent = true
+payload = '''-- flower_patch
+set_blind_usage(G.GAME.blind, true)
+-- / flower_patch'''
+
+# patch to add blind counter for loss
+[[patches]]
+[patches.pattern]
+target = 'functions/state_events.lua'
+pattern = '''if game_over then'''
+position = 'after'
+match_indent = true
+payload = '''    -- flower_patch
+    set_blind_usage(G.GAME.blind, false)
     -- / flower_patch'''
 
 # patch to add smallest/largest deck tracker

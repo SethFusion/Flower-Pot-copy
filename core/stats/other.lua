@@ -162,6 +162,26 @@ function set_deck_rounds()
     end
 end
 
+function set_tag_usage(tag)
+  if not tag then return end
+  G.PROFILES[G.SETTINGS.profile].tag_usage[tag.key] = G.PROFILES[G.SETTINGS.profile].tag_usage[tag.key] or {count = 0}
+  G.PROFILES[G.SETTINGS.profile].tag_usage[tag.key].count = G.PROFILES[G.SETTINGS.profile].tag_usage[tag.key].count + 1
+  G:save_settings()
+end
+
+function set_blind_usage(blind, win)
+  local blind_real = blind.config.blind
+  if not blind_real then return end
+  G.PROFILES[G.SETTINGS.profile].blind_usage[blind_real.key] = G.PROFILES[G.SETTINGS.profile].blind_usage[blind_real.key] or {count = 0, wins = 0, losses = 0}
+  G.PROFILES[G.SETTINGS.profile].blind_usage[blind_real.key].count = G.PROFILES[G.SETTINGS.profile].blind_usage[blind_real.key].count + 1
+  if (win) then
+    G.PROFILES[G.SETTINGS.profile].blind_usage[blind_real.key].wins = G.PROFILES[G.SETTINGS.profile].blind_usage[blind_real.key].wins + 1
+  else
+    G.PROFILES[G.SETTINGS.profile].blind_usage[blind_real.key].losses = G.PROFILES[G.SETTINGS.profile].blind_usage[blind_real.key].losses + 1
+  end
+  G:save_settings()
+end
+
 -- Poker Hand Level Tracking
 local level_up_hand_ref = level_up_hand
 function level_up_hand(card, hand, instant, amount)

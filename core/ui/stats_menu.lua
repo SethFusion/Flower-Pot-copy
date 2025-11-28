@@ -25,7 +25,7 @@ function create_UIBox_high_scores()
             }},
             {n=G.UIT.C, config={align = "cm", padding = 0.1, r = 0.1, colour = G.C.CLEAR}, nodes={
                 create_progress_box(),
-                UIBox_button({button = 'usage', label = {localize('k_card_stats')}, minw = 7.5, minh = 0.75, focus_args = {nav = 'wide'}}),
+                UIBox_button({button = 'usage', label = {localize('b_flowpot_collection_stats')}, minw = 7.5, minh = 0.75, focus_args = {nav = 'wide'}}),
                 UIBox_button({button = 'poker_hand_stats', label = {localize('b_flowpot_poker_hand_stats')}, minw = 7.5, minh = 0.75, focus_args = {nav = 'wide'}}),
                 UIBox_button({button = 'deck_stats', label = {localize('b_flowpot_deck_stats')}, minw = 7.5, minh = 0.75, focus_args = {nav = 'wide'}}),
             }},

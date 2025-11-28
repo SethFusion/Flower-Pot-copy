@@ -46,3 +46,16 @@ if SMODS and SMODS.ConsumableTypes then
 	end
 end'''
 match_indent = true
+
+# patch to add collections to profile
+[[patches]]
+[patches.pattern]
+target = 'game.lua'
+pattern = '''deck_stakes = {},'''
+position = 'after'
+match_indent = true
+payload = '''-- flower_patch
+-- FLOWER_TARGET_CUSTOM_COLLECTION
+tag_usage = {},
+blind_usage = {},
+-- / flower_patch'''
