@@ -82,6 +82,9 @@ return {
             c_boosters_bought = "Booster Packs Bought",
 
             c_tags_used = "Tags Redeemed",
+            c_largest_deck = "Largest Deck",
+            c_smallest_deck = "Smallest Deck",
+            c_largest_debt = "Most Debt",
         },
         v_dictionary = {
             b_flowpot_num_rounds = "#1# Rounds",

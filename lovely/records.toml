@@ -44,6 +44,7 @@ payload = '''-- flower_patch
 	c_wheel_nope_count = 0,
 	c_wheel_bless_count = 0,
 	c_lucky_money_total = 0,
+    c_tags_used = 0,
 -- / flower_patch'''
 
 # patch SMODS pseudorandom_probability for wheel of fortune career stat tracking
@@ -139,6 +140,60 @@ end
 if self.ability.consumeable.mod_conv or self.ability.consumeable.suit_conv then
 -- / flower_patch'''
 
+# patch to add tag counter
+[[patches]]
+[patches.pattern]
+target = 'tag.lua'
+pattern = '''function Tag:yep(message, _colour, func)'''
+position = 'after'
+match_indent = true
+payload = '''    -- flower_patch
+    inc_career_stat('c_tags_used', 1)
+    local custom_args = {}
+    -- FLOWER_TARGET_TAG_USED_UNLOCK_CONDITION
+    check_for_unlock({type = 'tag_used', custom_args = custom_args})
+    -- / flower_patch'''
+
+# patch to add smallest/largest deck tracker
+[[patches]]
+[patches.pattern]
+target = 'functions/common_events.lua'
+pattern = '''if args.type == 'modify_deck' then
+        if G.deck and G.deck.config.card_limit <= 20 then'''
+position = 'at'
+match_indent = true
+payload = '''-- flower_patch
+if args.type == 'modify_deck' then
+    if (G.deck) then
+        check_and_set_high_score('largest_deck', G.deck.config.card_limit)
+        check_and_set_low_score('smallest_deck', G.deck.config.card_limit)
+    end
+    if G.deck and G.deck.config.card_limit <= 20 then
+-- / flower_patch'''
+
+# patches the hand smallest deck to card:remove()
+[[patches]]
+[patches.pattern]
+target = 'card.lua'
+pattern = '''end
+
+    remove_all(self.children)'''
+position = 'after'
+match_indent = true
+payload = '''-- flower_patch
+if G.deck then check_and_set_low_score('smallest_deck', G.deck.config.card_limit) end
+-- / flower_patch'''
+
+# patch to add most debt trcaker
+[[patches]]
+[patches.pattern]
+target = 'functions/common_events.lua'
+pattern = '''check_and_set_high_score('most_money', G.GAME.dollars)'''
+position = 'after'
+match_indent = true
+payload = '''-- flower_patch
+check_and_set_low_score('largest_debt', G.GAME.dollars)
+-- / flower_patch'''
 
 
 

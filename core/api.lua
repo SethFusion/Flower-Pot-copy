@@ -84,7 +84,7 @@ end
 --      value you want to display. These two values must be the same. 
 -- str_color. OPTIONAL. Use a G.C. color or a hex value. Default depends on str_type
 -- str_type. OPTIONAL. Use one of these values: "number", "string", "money", "blank"
---      OR declare a function that has no parameters and returns a number
+--      OR declare a function that has no parameters and returns the value you want to display and "number", "string", or "money"
 --      blank skips a row, allowing you to keep similar stats grouped together, use c_blank_row as key
 FlowerPot.carrer_records = {}
 function FlowerPot.addCareerRecord(key, str_color, str_type)

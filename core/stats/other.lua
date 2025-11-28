@@ -79,6 +79,23 @@ function check_and_set_high_score(score, amt)
     end
 end
 
+function check_and_set_low_score(score, amt)
+    if not amt or type(amt) ~= 'number' then return end
+    if G.GAME.round_scores[score] and math.floor(amt) < G.GAME.round_scores[score].amt then
+      G.GAME.round_scores[score].amt = math.floor(amt)
+    end
+    if  G.GAME.seeded  then return end
+    if score == 'hand' and G.SETTINGS.COMP and ((not G.SETTINGS.COMP.score) or (G.SETTINGS.COMP.score > math.floor(amt))) then 
+      G.SETTINGS.COMP.score = amt
+      send_score(math.floor(amt))
+    end
+    if G.PROFILES[G.SETTINGS.profile].high_scores[score] and math.floor(amt) < G.PROFILES[G.SETTINGS.profile].high_scores[score].amt then
+      if G.GAME.round_scores[score] then G.GAME.round_scores[score].high_score = true end
+      G.PROFILES[G.SETTINGS.profile].high_scores[score].amt = math.floor(amt)
+      G:save_settings()
+    end
+end
+
 local set_joker_win_ref = set_joker_win
 function set_joker_win()
     set_joker_win_ref()
