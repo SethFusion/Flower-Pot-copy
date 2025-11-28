@@ -18,30 +18,42 @@ function build_career_stats_master(page)
     local statlist = FlowerPot.carrer_records
     page = page or 1
     local row_count = 8
-    local career_stat_uiboxes = {}
+    local total_page_count = row_count * 2
+    local career_stat_uiboxes_left = {}
     for i = 1, row_count do
-        local career_stat = statlist[i+(row_count*(page-1))]
+        local career_stat = statlist[i+(total_page_count*(page-1))]
         if career_stat ~= nil then
-            career_stat_uiboxes[#career_stat_uiboxes+1] = create_UIBox_career_stats_row(career_stat)
+            career_stat_uiboxes_left[#career_stat_uiboxes_left+1] = create_UIBox_career_stats_row(career_stat)
+        end
+    end
+    local career_stat_uiboxes_right = {}
+    for i = row_count+1, total_page_count do
+        local career_stat = statlist[i+(total_page_count*(page-1))]
+        if career_stat ~= nil then
+            career_stat_uiboxes_right[#career_stat_uiboxes_right+1] = create_UIBox_career_stats_row(career_stat)
         end
     end
 
     local career_stat_options = {}
-    for i = 1, math.ceil(#statlist/row_count) do
-            table.insert(career_stat_options, localize('k_page')..' '..tostring(i)..'/'..tostring(math.ceil(#statlist/row_count)))
+    for i = 1, math.ceil(#statlist/total_page_count) do
+            table.insert(career_stat_options, localize('k_page')..' '..tostring(i)..'/'..tostring(math.ceil(#statlist/total_page_count)))
     end
 
     return {n=G.UIT.ROOT, config = {align = "cm", colour = G.C.CLEAR}, nodes = {
-        {n=G.UIT.C, config = {align = "cm"}, nodes = {
-            {n=G.UIT.R, config = {align = "cm", padding = 0.1, r = 0.1, colour = G.C.UI.TRANSPARENT_DARK, minh = 8.7}, nodes = {
-                {n=G.UIT.C, config = {align = "cm", padding = 0.05}, nodes = career_stat_uiboxes}
+        {n=G.UIT.R, config = {align = "cm"}, nodes = {
+            {n=G.UIT.C, config = {align = "tm", padding = 0.1, r = 0.1, colour = G.C.UI.TRANSPARENT_DARK, minh = 8.7}, nodes = {
+                {n=G.UIT.C, config = {align = "cm", padding = 0.05}, nodes = career_stat_uiboxes_left}
             }},
-            #statlist > row_count and {n=G.UIT.R, config={align = "cm"}, nodes={
-                create_option_cycle({options = career_stat_options, w = 4.5, cycle_shoulders = true, opt_callback = 'career_stats_page', current_option = page, colour = G.C.RED, no_pips = true, focus_args = {snap_to = true, nav = 'wide'}})
-            }} or nil
-        }}
+            {n=G.UIT.C, config = {align = "tm", padding = 0.1, r = 0.1, colour = G.C.UI.TRANSPARENT_DARK, minh = 8.7}, nodes = {
+                {n=G.UIT.C, config = {align = "cm", padding = 0.05}, nodes = career_stat_uiboxes_right}
+            }}
+        }},
+        #statlist > total_page_count and {n=G.UIT.R, config={align = "cm"}, nodes={
+            create_option_cycle({options = career_stat_options, w = 4.5, cycle_shoulders = true, opt_callback = 'career_stats_page', current_option = page, colour = G.C.RED, no_pips = true, focus_args = {snap_to = true, nav = 'wide'}})
+        }} or nil
     }}
 end
+
 
 function create_UIBox_career_stats_row(career_stat)
     local career_stat_key = career_stat[1] -- index of key
@@ -51,16 +63,14 @@ function create_UIBox_career_stats_row(career_stat)
 
     local career_stat_record = nil
     if type(str_type) == 'function' then
-        career_stat_record = str_type()
-        str_type = 'number'
+        career_stat_record, str_type = str_type()
     else
         career_stat_record = G.PROFILES[G.SETTINGS.profile].career_stats[career_stat_key]
     end
+    if not career_stat_record then return nil end -- record is nil or invalid
 
     local label_text = localize(career_stat_key)
-    if not career_stat_record then return nil end -- record is nil
-    if not label_text then return nil end -- there is no localized label to display
-
+    if not label_text then label_text = "err-no dictionary found" end
     local label_scale = 0.65 - 0.005*math.max(string.len(label_text)-8, 0)
     local label_w, score_w, h = 3.5, 4, 0.8
 
