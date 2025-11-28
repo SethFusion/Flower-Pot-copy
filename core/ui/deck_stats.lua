@@ -180,12 +180,12 @@ function buildDeckStats_overview(deck)
             }},
             {n=G.UIT.C, config = {align = "cm"}, nodes = {
                 {n=G.UIT.R, config = {align = "cm", padding = 0.1}, nodes = {
-                    {n=G.UIT.T, config={text = localize("b_flowpot_deck_records"), scale = 0.5, colour = G.C.UI.TEXT_LIGHT}},
+                    {n=G.UIT.T, config={text = localize("k_flowpot_deck_records"), scale = 0.5, colour = G.C.UI.TEXT_LIGHT}},
                 }},
                 {n=G.UIT.R, config = {align = "cm", colour = G.C.UI.TRANSPARENT_DARK, padding = 0.1, r = 0.1}, nodes = {
-                    create_UIBox_deck_stat_row({data = (''..total_wins).."/"..(''..total_losses), loc_key = "b_flowpot_total_wins_losses"}),
-                    create_UIBox_deck_stat_row({data = lowest_rounds, loc_key = "b_flowpot_fastest_run", loc_val = "b_flowpot_num_rounds"}),
-                    create_UIBox_deck_stat_row({data = number_format(highest_score), loc_key = "b_flowpot_highest_score"}),
+                    create_UIBox_deck_stat_row({data = (''..total_wins).."/"..(''..total_losses), loc_key = "k_flowpot_total_wins_losses"}),
+                    create_UIBox_deck_stat_row({data = lowest_rounds, loc_key = "k_flowpot_fastest_run", loc_val = "b_flowpot_num_rounds"}),
+                    create_UIBox_deck_stat_row({data = number_format(highest_score), loc_key = "k_flowpot_highest_score"}),
                 }},
             }},
             {n=G.UIT.C, config = {align = "cm"}, nodes = {
@@ -216,7 +216,7 @@ function create_UIBox_deck_stat_stickers(deck)
         rows[#rows+1] = 
         {n=G.UIT.R, config={align = "cm", padding = 0.05, r = 0.1, colour = darken(G.C.JOKER_GREY, 0.1), emboss = 0.05}, nodes={
             {n=G.UIT.C, config={align = "cm", padding = 0.05, minw = 3.5*text_scale, maxw = 3.5*text_scale}, nodes={
-                {n=G.UIT.T, config={text = localize((i == 1 and "b_flowpot_per_deck_joker" or "b_flowpot_per_deck_voucher")), scale = 0.5*text_scale, colour = G.C.UI.TEXT_LIGHT, shadow = true}},
+                {n=G.UIT.T, config={text = localize((i == 1 and "k_flowpot_per_deck_joker" or "k_flowpot_per_deck_voucher")), scale = 0.5*text_scale, colour = G.C.UI.TEXT_LIGHT, shadow = true}},
             }},
             {n=G.UIT.C, config={align = "cl", minh = 0.8, r = 0.1, minw = 3.5*text_scale, colour = G.C.BLACK, emboss = 0.05,
             progress_bar = {

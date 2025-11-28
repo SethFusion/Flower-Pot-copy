@@ -3,7 +3,7 @@ FlowerPot.addStatType({
     key = "times_used",
     display_txt = {
         button = "b_flowpot_times_used_short",
-        full = "b_flowpot_times_used_expand",
+        full = "k_flowpot_times_used_expand",
     },
     valid_stat_groups = {["consumable_usage"] = true},
     create_stat_table = function(self, stat_group_info)
@@ -220,7 +220,7 @@ FlowerPot.addStatType({
     key = "round_wins",
     display_txt = {
         button = "b_flowpot_rounds_won_short",
-        full = "b_flowpot_rounds_won_expand",
+        full = "k_flowpot_rounds_won_expand",
     },
     valid_stat_groups = {["joker_usage"] = true},
     create_stat_table = function(self, stat_group_info)
@@ -232,7 +232,7 @@ FlowerPot.addStatType({
     key = "times_redeemed",
     display_txt = {
         button = "b_flowpot_times_redeemed_short",
-        full = "b_flowpot_times_redeemed_expand",
+        full = "k_flowpot_times_redeemed_expand",
     },
     valid_stat_groups = {["voucher_usage"] = true},
     create_stat_table = function(self, stat_group_info)
@@ -244,7 +244,7 @@ FlowerPot.addStatType({
     key = "stake_wins",
     display_txt = {
         button = "b_flowpot_times_stake_win_short",
-        full = "b_flowpot_times_stake_win_expand",
+        full = "k_flowpot_times_stake_win_expand",
     },
     valid_stat_groups = {["joker_usage"] = true, ["voucher_usage"] = true},
     create_stat_table = function(self, stat_group_info)

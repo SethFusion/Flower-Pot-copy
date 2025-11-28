@@ -82,14 +82,14 @@ function FlowerPot.config_tab()
         nodes = {
             {n=G.UIT.C, config = {align = "cm", padding = 0.1}, nodes = {
 				create_toggle({
-					label = localize("b_flowpot_tooltip_settings"),
+					label = localize("k_flowpot_tooltip_settings"),
 					ref_table = FlowerPot.CONFIG,
 					ref_value = "stat_tooltips_enabled",
 				}),
                 create_option_cycle({
-                    label = localize('b_flowpot_voucher_sticker_setting'),
+                    label = localize('k_flowpot_voucher_sticker_setting'),
                     scale = 0.8,
-                    options = localize('b_flowpot_voucher_sticker_options'),
+                    options = localize('ml_flowpot_voucher_sticker_options'),
                     opt_callback = 'flowpot_voucher_sticker_settings',
                     current_option = FlowerPot.CONFIG.voucher_sticker_enabled,
                     w = 5
