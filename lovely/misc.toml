@@ -35,7 +35,7 @@ target = "functions/UI_definitions.lua"
 pattern = 'function desc_from_rows(desc_nodes, empty, maxw)'
 position = "after"
 payload = '''
-if FlowerPot.GLOBAL.IN_DECK_STATS and empty then
+if (FlowerPot.GLOBAL.IN_DECK_STATS or FlowerPot.GLOBAL.IN_DECK_STATS_OVERVIEW) and empty then
     empty = nil
 end
 '''

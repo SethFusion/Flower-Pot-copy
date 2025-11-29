@@ -83,14 +83,14 @@ function buildCardStats_histogram(args)
     end
     table.sort(used_cards, function (a, b) return a.count > b.count end )
     local histograms = {{}, {}}
-    local histogram_colour = G.C.RED
+    local histogram_colour = G.C.BLUE
 
     for i = 1, 2 do
         for ii = 1, 4 do
             local v = used_cards[ii+(4*(i-1))+(8*(page-1))]
             if v then 
                 histograms[i][#histograms[i]+1] = create_UIBox_histogram(object_list[v.key], v, max_amt)
-                histogram_colour = G.C.SECONDARY_SET[object_list[v.key].set or G.C.GREY]
+                histogram_colour = G.C.SECONDARY_SET[object_list[v.key].set] or G.C.BLUE
             end
         end
     end
@@ -125,7 +125,7 @@ function create_UIBox_histogram(center, stats, max_amt)
         local temp_tag_ui, temp_tag_sprite = tag:generate_UI()
         area = {n=G.UIT.C, config={align = "cm", padding = 0.1}, nodes={ temp_tag_ui, }}
     elseif FlowerPot.GLOBAL.CARD_STATS_FILTER.object_list == G.P_BLINDS then
-        local blind = AnimatedSprite(0,0,1.3,1.3, G.ANIMATION_ATLAS['blind_chips'], center.pos)
+        local blind = AnimatedSprite(0,0,1,1, G.ANIMATION_ATLAS['blind_chips'], center.pos)
         blind:define_draw_steps({
           {shader = 'dissolve', shadow_height = 0.05},
           {shader = 'dissolve'}
@@ -176,7 +176,7 @@ function create_UIBox_histogram(center, stats, max_amt)
             }},
             {n=G.UIT.C, config={align = "cm", padding = 0.03}, nodes={
                 {n=G.UIT.R, config={align = "cm"}, nodes={
-                    {n=G.UIT.C, config={align = "cm", minw = 2*(stats.count/max_amt), minh = 0.7, colour = G.C.SECONDARY_SET[center.set] or G.C.RED, res = 0.1, r = 0.003}, nodes={}},
+                    {n=G.UIT.C, config={align = "cm", minw = 2*(stats.count/max_amt), minh = 0.7, colour = G.C.SECONDARY_SET[center.set] or G.C.BLUE, res = 0.1, r = 0.003}, nodes={}},
                     {n=G.UIT.C, config={align = "cm", minw = 2-(2*(stats.count/max_amt)), minh = 0.7, colour = darken(G.C.UI.TRANSPARENT_DARK, 0.1)}, res = 0.1, r = 0.003, nodes={}},
                 }},
             }},
