@@ -182,6 +182,16 @@ function set_blind_usage(blind, win)
   G:save_settings()
 end
 
+function set_card_usage(card, type)
+  if not card then return end
+  G.PROFILES[G.SETTINGS.profile].card_usage[card.config.card_key] = G.PROFILES[G.SETTINGS.profile].card_usage[card.config.card_key] or {count = 0, destroyed = 0}
+  if type == 'scored' then
+    G.PROFILES[G.SETTINGS.profile].card_usage[card.config.card_key].count = G.PROFILES[G.SETTINGS.profile].card_usage[card.config.card_key].count + 1
+  elseif type == 'destroyed' then
+    G.PROFILES[G.SETTINGS.profile].card_usage[card.config.card_key].destroyed = G.PROFILES[G.SETTINGS.profile].card_usage[card.config.card_key].destroyed + 1
+  end
+end
+
 -- Poker Hand Level Tracking
 local level_up_hand_ref = level_up_hand
 function level_up_hand(card, hand, instant, amount)

@@ -218,7 +218,54 @@ payload = '''-- flower_patch
 check_and_set_low_score('largest_debt', G.GAME.dollars)
 -- / flower_patch'''
 
+# patch button_callbacks to check for unlocks after using a consumable
+[[patches]]
+[patches.pattern]
+target = 'functions/button_callbacks.lua'
+pattern = '''e.config.ref_table:use_consumeable(area)'''
+position = 'after'
+match_indent = true
+payload = '''-- flower_patch
+local custom_args = {}
+-- FLOWER_TARGET_CONSUMABLE_USED_UNLOCK_CONDITION
+check_for_unlock({type = 'use_consumeable', custom_args = custom_args})
+-- / flower_patch'''
 
+# patch to add playing card usage counter
+[[patches]]
+[patches.pattern]
+target = 'functions/state_events.lua'
+pattern = '''for i=1, #scoring_hand do'''
+position = 'after'
+match_indent = true
+payload = '''    -- flower_patch
+    set_card_usage(scoring_hand[i], 'scored')
+    -- / flower_patch'''
+
+# patch to save card usage data
+[[patches]]
+[patches.pattern]
+target = 'functions/state_events.lua'
+pattern = '''highlight_card(scoring_hand[i],(i-0.999)/5,'up')
+    end'''
+position = 'after'
+match_indent = true
+payload = '''-- flower_patch
+G:save_settings()
+-- / flower_patch'''
+
+[[patches]]
+[patches.pattern]
+target = 'card.lua'
+pattern = '''if self.skip_destroy_animation then'''
+match_indent = true
+position = 'before'
+payload = '''-- flower_patch
+if (self.ability.set == 'Default' or self.ability.set == 'Enhanced') and G.STATE ~= 11 and G.STATE ~= 7 then
+  set_card_usage(self, 'destroyed')
+  G:save_settings()
+end
+-- / flower_patch'''
 
 #-------------------------------------------------------------
 # Additional Patches 

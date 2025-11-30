@@ -9,6 +9,11 @@ function G.UIDEF.usage_tabs()
             tab_definition_function_args = {'joker_usage', "round_wins"},
         },
         {
+            label = localize('b_flowpot_stat_playing_cards'),
+            tab_definition_function = create_UIBox_card_stats,
+            tab_definition_function_args = {'card_usage', "times_played", 'Card'},
+        },
+        {
             label = localize('b_stat_consumables'),
             tab_definition_function = create_UIBox_card_stats,
             tab_definition_function_args = {'consumeable_usage', "times_used"},
@@ -49,6 +54,7 @@ function create_UIBox_card_stats(args)
     local object_type = nil
     if args[3] == 'Tag' then object_type = G.P_TAGS
     elseif args[3] == 'Blind' then object_type = G.P_BLINDS
+    elseif args[3] == 'Card' then object_type = G.P_CARDS
     else object_type = G.P_CENTERS end
 
     FlowerPot.GLOBAL.CARD_STATS_FILTER = {
@@ -81,6 +87,18 @@ function buildCardStats_histogram(args)
             end
         end
     end
+    if FlowerPot.GLOBAL.CARD_STATS_FILTER.object_list == G.P_CARDS then 
+        for i, v in ipairs(stat_group_info) do 
+            if object_list[v.key] then
+                local data_table = FlowerPot.stat_types[stat_type]:create_stat_table(v)
+                if data_table.count > 0 then 
+                    used_cards[#used_cards+1] = data_table
+                    if data_table.count > max_amt then max_amt = data_table.count end
+                end
+            end
+        end
+    end
+
     table.sort(used_cards, function (a, b) return a.count > b.count end )
     local histograms = {{}, {}}
     local histogram_colour = G.C.BLUE
@@ -119,11 +137,12 @@ end
 
 function create_UIBox_histogram(center, stats, max_amt)
     local area = nil
-    --print(center)
+    -- tag usage page
     if FlowerPot.GLOBAL.CARD_STATS_FILTER.object_list == G.P_TAGS then 
         local tag = Tag(center.key, true)
         local temp_tag_ui, temp_tag_sprite = tag:generate_UI()
         area = {n=G.UIT.C, config={align = "cm", padding = 0.1}, nodes={ temp_tag_ui, }}
+    -- blind usage page
     elseif FlowerPot.GLOBAL.CARD_STATS_FILTER.object_list == G.P_BLINDS then
         local blind = AnimatedSprite(0,0,1,1, G.ANIMATION_ATLAS['blind_chips'], center.pos)
         blind:define_draw_steps({
@@ -150,8 +169,15 @@ function create_UIBox_histogram(center, stats, max_amt)
         blind.stop_hover = function() blind.hovering = false; Node.stop_hover(blind); blind.hover_tilt = 0 end
         blind.config = {blind = center, force_focus = true}
         area = { n = G.UIT.O, config = { object = blind, focus_with_object = true } }
+    -- all other usage page
     else 
-        local card = Card(0,0, 0.5*G.CARD_W, 0.5*G.CARD_H, nil, center) 
+        local card = nil
+        -- for playing cards only
+        if FlowerPot.GLOBAL.CARD_STATS_FILTER.object_list == G.P_CARDS then
+            card = Card(0,0, 0.5*G.CARD_W, 0.5*G.CARD_H, G.P_CARDS[stats.key], G.P_CENTERS['c_base'], {playing_card = G.playing_card}) 
+        else
+            card = Card(0,0, 0.5*G.CARD_W, 0.5*G.CARD_H, nil, center) 
+        end
         if center.set == "Voucher" then card.sticker = get_voucher_win_sticker(center) end
 
         card.ambient_tilt = 0.8
