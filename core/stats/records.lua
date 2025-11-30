@@ -225,7 +225,9 @@ end
 
 FlowerPot.addCareerRecord("c_wins", G.C.BLUE)
 FlowerPot.addCareerRecord("c_losses", G.C.RED)
-FlowerPot.addCareerRecord("c_win_rate", G.C.IMPORTANT, function() return (G.PROFILES[G.SETTINGS.profile].career_stats["c_wins"] / G.PROFILES[G.SETTINGS.profile].career_stats["c_losses"]) or 0, "number" end)
+FlowerPot.addCareerRecord("c_win_rate", G.C.IMPORTANT, function() 
+    return (G.PROFILES[G.SETTINGS.profile].career_stats["c_wins"] / (G.PROFILES[G.SETTINGS.profile].career_stats["c_wins"] + G.PROFILES[G.SETTINGS.profile].career_stats["c_losses"])) or 0, "number" 
+end)
 FlowerPot.addCareerRecord("c_rounds")
 FlowerPot.addCareerRecord("c_hands_played")
 FlowerPot.addCareerRecord("c_cards_played")
