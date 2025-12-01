@@ -123,31 +123,33 @@ FlowerPot.addStatGroup({
 })
 
 local blind_usage = "blind_usage"
-FlowerPot.addStatGroup({
-    key = blind_usage,
-    folder_dir = {"Cards"},
-    file_name = blind_usage, 
-    stat_set = "Blind",
-    create_data_table = function(self, format)
-        local card_type_stats = copy_table(G.PROFILES[G.SETTINGS.profile][blind_usage])
-        local data_table = {}
-        if next(card_type_stats) then
-            for k, vv in pairs(card_type_stats) do
-                if G.P_BLINDS[k] then
-                    local card_table = vv
-                    card_table["key"] = k
-                    card_table["name"] = localize{type = 'name_text', key = k, set = self.stat_set}
-                    card_table.times_lost = nil
-                    card_table.times_won = nil
+for i, v in ipairs({ "blind_usage", "boss_blinds", "final_boss_blinds"}) do
+    FlowerPot.addStatGroup({
+        key = v,
+        folder_dir = {"Cards"},
+        file_name = blind_usage, 
+        stat_set = "Blind",
+        create_data_table = function(self, format)
+            local card_type_stats = copy_table(G.PROFILES[G.SETTINGS.profile][blind_usage])
+            local data_table = {}
+            if next(card_type_stats) then
+                for k, vv in pairs(card_type_stats) do
+                    if G.P_BLINDS[k] and (v == 'blind_usage' or (v == "boss_blinds" and G.P_BLINDS[k].boss) or (v == "final_boss_blinds" and G.P_BLINDS[k].boss and G.P_BLINDS[k].boss['showdown'])) then
+                        local card_table = vv
+                        card_table["key"] = k
+                        card_table["name"] = localize{type = 'name_text', key = k, set = self.stat_set}
+                        card_table.times_lost = nil
+                        card_table.times_won = nil
 
-                    data_table[#data_table+1] = card_table
+                        data_table[#data_table+1] = card_table
+                    end
                 end
+                table.sort(data_table, function (a, b) return a.count > b.count end )
             end
-            table.sort(data_table, function (a, b) return a.count > b.count end )
+            return data_table
         end
-        return data_table
-    end
-})
+    })
+end
 
 local card_usage = "card_usage"
 FlowerPot.addStatGroup({
@@ -353,7 +355,7 @@ FlowerPot.addStatType({
         button = "b_flowpot_times_faced_short",
         full = "k_flowpot_times_faced_long",
     },
-    valid_stat_groups = {["blind_usage"] = true},
+    valid_stat_groups = {["blind_usage"] = true, ["boss_blinds"] = true, ["final_boss_blinds"] = true},
     create_stat_table = function(self, stat_group_info)
         return {key = stat_group_info.key, count = stat_group_info.count}
     end
@@ -365,7 +367,7 @@ FlowerPot.addStatType({
         button = "b_flowpot_times_won_short",
         full = "k_flowpot_times_won_long",
     },
-    valid_stat_groups = {["blind_usage"] = true},
+    valid_stat_groups = {["blind_usage"] = true, ["boss_blinds"] = true, ["final_boss_blinds"] = true},
     create_stat_table = function(self, stat_group_info)
         return {key = stat_group_info.key, count = stat_group_info.wins}
     end
@@ -377,7 +379,7 @@ FlowerPot.addStatType({
         button = "b_flowpot_times_lost_short",
         full = "k_flowpot_times_lost_long",
     },
-    valid_stat_groups = {["blind_usage"] = true},
+    valid_stat_groups = {["blind_usage"] = true, ["boss_blinds"] = true, ["final_boss_blinds"] = true},
     create_stat_table = function(self, stat_group_info)
         return {key = stat_group_info.key, count = stat_group_info.losses}
     end
