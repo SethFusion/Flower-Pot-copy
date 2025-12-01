@@ -157,7 +157,7 @@ end
 -- xmult
 FlowerPot.rev_lookup_records["j_stencil"].check_record = function(self, card)
     if next(SMODS.find_card('j_stencil', true)) then 
-        return card.ability.extra.x_mult
+        return card.ability.x_mult
     end
     return 0
 end
