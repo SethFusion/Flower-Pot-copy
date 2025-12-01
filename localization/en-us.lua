@@ -49,7 +49,7 @@ return {
             k_flowpot_tooltip_settings = "Display Stat Tooltips",
             k_flowpot_voucher_sticker_setting = "Display Voucher Sticker/Tooltip",
 
-            ml_flowpot_voucher_sticker_options = {
+            ml_flowpot_config_display_options = {
                 "Run + Collections",
                 "Collections",
                 "Never"

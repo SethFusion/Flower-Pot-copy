@@ -81,15 +81,18 @@ function FlowerPot.config_tab()
         },
         nodes = {
             {n=G.UIT.C, config = {align = "cm", padding = 0.1}, nodes = {
-				create_toggle({
+				create_option_cycle({
 					label = localize("k_flowpot_tooltip_settings"),
-					ref_table = FlowerPot.CONFIG,
-					ref_value = "stat_tooltips_enabled",
+                    scale = 0.8,
+                    options = localize('ml_flowpot_config_display_options'),
+                    opt_callback = 'flowpot_tooltip_settings',
+                    current_option = FlowerPot.CONFIG.stat_tooltips_enabled,
+                    w = 5
 				}),
                 create_option_cycle({
                     label = localize('k_flowpot_voucher_sticker_setting'),
                     scale = 0.8,
-                    options = localize('ml_flowpot_voucher_sticker_options'),
+                    options = localize('ml_flowpot_config_display_options'),
                     opt_callback = 'flowpot_voucher_sticker_settings',
                     current_option = FlowerPot.CONFIG.voucher_sticker_enabled,
                     w = 5
@@ -102,6 +105,13 @@ end
 
 G.FUNCS.flowpot_voucher_sticker_settings = function(args)
     FlowerPot.CONFIG.voucher_sticker_enabled = args.to_key
+    if SMODS and SMODS.can_load then
+        SMODS.save_mod_config(SMODS.Mods["FlowerPot"])
+    end
+end
+
+G.FUNCS.flowpot_tooltip_settings = function(args)
+    FlowerPot.CONFIG.stat_tooltips_enabled = args.to_key
     if SMODS and SMODS.can_load then
         SMODS.save_mod_config(SMODS.Mods["FlowerPot"])
     end

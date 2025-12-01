@@ -191,8 +191,8 @@ function create_UIBox_histogram(center, stats, max_amt)
         card.ambient_tilt = 0.8
         area = CardArea(
             G.ROOM.T.x + 0.2*G.ROOM.T.w/2,G.ROOM.T.h,
-            G.CARD_W*0.4,
-            G.CARD_H*0.4, 
+            G.CARD_W*0.45,
+            G.CARD_H*0.45, 
             {card_limit = 2, type = 'title', highlight_limit = 0})
         area:emplace(card)
         area = {n=G.UIT.O, config={object = area}}
@@ -476,13 +476,13 @@ function create_UIBox_histogram_blind_type_tab(args)
         {n=G.UIT.C, config={align = "cm", padding = 0.05, minh = 2}, nodes={
             {n=G.UIT.R, config={align = "cm", padding = 0.05, colour = G.C.BLACK, minh = 5.5, r = 0.1}, nodes={
                 {n=G.UIT.R, config = {align = 'cm', padding = 0.1}, nodes = {
-                    UIBox_button({ label = {localize('b_flowpot_all_blinds')}, button = "histogram_reset_blind_type", ref_table = {stat_group = "blind_usage"}, colour = G.C.RED, minw = 5, minh = 0.65, scale = 0.6}),
+                    UIBox_button({ label = {localize('b_flowpot_all_blinds')}, button = "histogram_reset_blind_type", ref_table = {stat_group = "blind_usage"}, colour = G.C.RARITY[2], minw = 5, minh = 0.65, scale = 0.6}),
                 }},
                 {n=G.UIT.R, config = {align = 'cm', padding = 0.1}, nodes = {
-                    UIBox_button({ label = {localize('b_flowpot_boss_blinds')}, button = "histogram_reset_blind_type", ref_table = {stat_group = 'boss_blinds'}, colour = G.C.JOKER_GREY, minw = 5, minh = 0.65, scale = 0.6}),
+                    UIBox_button({ label = {localize('b_flowpot_boss_blinds')}, button = "histogram_reset_blind_type", ref_table = {stat_group = 'boss_blinds'}, colour = G.C.RARITY[3], minw = 5, minh = 0.65, scale = 0.6}),
                 }},
                 {n=G.UIT.R, config = {align = 'cm', padding = 0.1}, nodes = {
-                    UIBox_button({ label = {localize('b_flowpot_final_boss_blinds')}, button = "histogram_reset_blind_type", ref_table = {stat_group = 'final_boss_blinds'}, colour = G.C.GREY, minw = 5, minh = 0.65, scale = 0.6})
+                    UIBox_button({ label = {localize('b_flowpot_final_boss_blinds')}, button = "histogram_reset_blind_type", ref_table = {stat_group = 'final_boss_blinds'}, colour = G.C.RARITY[4], minw = 5, minh = 0.65, scale = 0.6})
                 }}
             }}
         }}

@@ -6,7 +6,7 @@ FlowerPot = {
     VERSION = "0.8.1",
     GLOBAL = {},
     CONFIG = {
-        ["stat_tooltips_enabled"] = true,
+        ["stat_tooltips_enabled"] = 1,
         ["voucher_sticker_enabled"] = 1,
     },
     path_to_self = function()
