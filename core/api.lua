@@ -87,7 +87,7 @@ end
 --      OR declare a function that has no parameters and returns the value you want to display and "number", "string", or "money"
 --      blank skips a row, allowing you to keep similar stats grouped together, use c_blank_row as key
 FlowerPot.carrer_records = {}
-function FlowerPot.addCareerRecord(key, str_color, str_type)
+function FlowerPot.add_career_record(key, str_color, str_type)
     if not key then return end
     if type(key) == "table" then return end
     if not str_type then str_type = "number" end
