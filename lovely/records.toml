@@ -276,7 +276,7 @@ target = "functions/common_events.lua"
 pattern = '''if first_pass and not (_c.set == 'Edition') and badges then'''
 position = "before"
 payload = '''
-if FlowerPot.rev_lookup_records[_c.key] and _c.discovered (FlowerPot.CONFIG.stat_tooltips_enabled == 1 or (FlowerPot.CONFIG.stat_tooltips_enabled == 2 and card and card.created_on_pause)) then
+if FlowerPot.rev_lookup_records[_c.key] and _c.discovered and (FlowerPot.CONFIG.stat_tooltips_enabled == 1 or (FlowerPot.CONFIG.stat_tooltips_enabled == 2 and card and card.created_on_pause)) then
     local card_progress = G.PROFILES[G.SETTINGS.profile].joker_usage[_c.key] or {}
     
     -- Only really matters for SMODS
