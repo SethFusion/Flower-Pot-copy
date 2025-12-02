@@ -9,6 +9,11 @@ function G.UIDEF.usage_tabs()
             tab_definition_function_args = {'joker_usage', "round_wins"},
         },
         {
+            label = localize('b_flowpot_stat_playing_cards'),
+            tab_definition_function = create_UIBox_card_stats,
+            tab_definition_function_args = {'card_usage', "times_played", 'Card'},
+        },
+        {
             label = localize('b_stat_consumables'),
             tab_definition_function = create_UIBox_card_stats,
             tab_definition_function_args = {'consumeable_usage', "times_used"},
@@ -16,7 +21,17 @@ function G.UIDEF.usage_tabs()
         {
             label = localize('b_stat_vouchers'),
             tab_definition_function = create_UIBox_card_stats,
-            tab_definition_function_args = {'voucher_usage', "times_redeemed", 'Voucher'},
+            tab_definition_function_args = {'voucher_usage', "times_redeemed_v", 'Voucher'},
+        },
+        {
+            label = localize('b_tags'),
+            tab_definition_function = create_UIBox_card_stats,
+            tab_definition_function_args = {'tag_usage', "times_redeemed_t", 'Tag'},
+        },
+        {
+            label = localize('b_blinds'),
+            tab_definition_function = create_UIBox_card_stats,
+            tab_definition_function_args = {'blind_usage', "times_faced", 'Blind'},
         },
     }
 
@@ -36,46 +51,68 @@ end
 
 FlowerPot.GLOBAL.CARD_STATS_FILTER = {}
 function create_UIBox_card_stats(args)
+    local object_type = nil
+    if args[3] == 'Tag' then object_type = G.P_TAGS
+    elseif args[3] == 'Blind' then object_type = G.P_BLINDS
+    elseif args[3] == 'Card' then object_type = G.P_CARDS
+    else object_type = G.P_CENTERS end
+
     FlowerPot.GLOBAL.CARD_STATS_FILTER = {
         stat_group = args[1],
         stat_type = args[2],
         set = args[3],
         consumable = (args[1] == "consumeable_usage"),
+        blind = (args[1] == "blind_usage"),
+        object_list = object_type
     }
     return {n=G.UIT.ROOT, config={align = "cm", minh = 3, padding = 0.05, r = 0.1, colour = G.C.CLEAR}, nodes={
         {n=G.UIT.C, config = {align = 'cm', colour = G.C.CLEAR, padding = 0.1}, nodes = {
-            {n=G.UIT.O, config={id = 'histogram', object = UIBox{definition = buildCardStats_histogram({}), config = {offset = {x=0,y=0}}}}},
-            {n=G.UIT.O, config={id = 'histogram_settings', object = UIBox{definition = buildCardStats_histogram_settings({}), config = {offset = {x=0,y=0}}}}}
+            {n=G.UIT.O, config={id = 'histogram', object = UIBox{definition = build_card_stats_histogram({}), config = {offset = {x=0,y=0}}}}},
+            {n=G.UIT.O, config={id = 'histogram_settings', object = UIBox{definition = build_card_stats_histogram_settings({}), config = {offset = {x=0,y=0}}}}}
         }}
     }}
 end
 
 -- Histograms master
-function buildCardStats_histogram(args)
-    local stat_group, _set, stat_type, mod, page = FlowerPot.GLOBAL.CARD_STATS_FILTER.stat_group, 
-        FlowerPot.GLOBAL.CARD_STATS_FILTER.set, FlowerPot.GLOBAL.CARD_STATS_FILTER.stat_type, FlowerPot.GLOBAL.CARD_STATS_FILTER.mod, args.page or 1
+function build_card_stats_histogram(args)
+    local stat_group, _set, stat_type, object_list, mod, page = FlowerPot.GLOBAL.CARD_STATS_FILTER.stat_group, 
+        FlowerPot.GLOBAL.CARD_STATS_FILTER.set, FlowerPot.GLOBAL.CARD_STATS_FILTER.stat_type, FlowerPot.GLOBAL.CARD_STATS_FILTER.object_list, FlowerPot.GLOBAL.CARD_STATS_FILTER.mod, args.page or 1
     local used_cards, max_amt = {}, 0
-    local stat_group_info = FlowerPot.stat_groups[stat_group]:create_data_table()
-    for i, v in ipairs(stat_group_info) do
-        if G.P_CENTERS[v.key] and G.P_CENTERS[v.key].discovered and (not _set or G.P_CENTERS[v.key].set == _set) and (not mod or (G.P_CENTERS[v.key].mod and G.P_CENTERS[v.key].mod.id == mod)) then
+    local stat_group_info = FlowerPot.stat_groups[stat_group]:create_data_table() or {}
+    local count_total = 0
+    for i, v in ipairs(stat_group_info) do 
+        if object_list[v.key] and object_list[v.key].discovered and (not _set or object_list[v.key].set == _set or FlowerPot.GLOBAL.CARD_STATS_FILTER.object_list == G.P_BLINDS) and (not mod or (object_list[v.key].mod and object_list[v.key].mod.id == mod)) then
             local data_table = FlowerPot.stat_types[stat_type]:create_stat_table(v)
             if data_table.count > 0 then 
                 used_cards[#used_cards+1] = data_table
                 if data_table.count > max_amt then max_amt = data_table.count end
+            end
+            count_total = count_total + data_table.count
+        end
+    end
+    if FlowerPot.GLOBAL.CARD_STATS_FILTER.object_list == G.P_CARDS then 
+        for i, v in ipairs(stat_group_info) do 
+            if object_list[v.key] then
+                local data_table = FlowerPot.stat_types[stat_type]:create_stat_table(v)
+                if data_table.count > 0 then 
+                    used_cards[#used_cards+1] = data_table
+                    if data_table.count > max_amt then max_amt = data_table.count end
+                end
+                count_total = count_total + data_table.count
             end
         end
     end
 
     table.sort(used_cards, function (a, b) return a.count > b.count end )
     local histograms = {{}, {}}
-    local histogram_colour = G.C.RED
+    local histogram_colour = G.C.BLUE
 
     for i = 1, 2 do
         for ii = 1, 4 do
             local v = used_cards[ii+(4*(i-1))+(8*(page-1))]
             if v then 
-                histograms[i][#histograms[i]+1] = create_UIBox_histogram(G.P_CENTERS[v.key], v, max_amt)
-                histogram_colour = G.C.SECONDARY_SET[G.P_CENTERS[v.key].set]
+                histograms[i][#histograms[i]+1] = create_UIBox_histogram(object_list[v.key], v, max_amt)
+                histogram_colour = G.C.SECONDARY_SET[object_list[v.key].set] or G.C.BLUE
             end
         end
     end
@@ -91,6 +128,10 @@ function buildCardStats_histogram(args)
                 {n=G.UIT.B, config={w = 0.2, h = 0.2, r = 0.1, colour = histogram_colour}},
                 {n=G.UIT.T, config={text = localize(FlowerPot.stat_types[stat_type].display_txt.full), scale = 0.35, colour = G.C.WHITE}}
             }},
+            {n=G.UIT.R, config={align = "cm", padding = 0.05}, nodes={
+                {n=G.UIT.T, config={text = localize('k_flowpot_total'), scale = 0.35, colour = G.C.WHITE}},
+                {n=G.UIT.T, config={text = count_total, scale = 0.35, colour = histogram_colour}},
+            }},
             {n=G.UIT.R, config={align = "cm", colour = lighten(G.C.BLACK, 0.05), r = 0.1, minh = 0.5*G.CARD_H*5, minw = 0.5*G.CARD_H*3, padding = 0.1}, nodes={
                 {n=G.UIT.C, config={align = "cm", padding = 0.1}, nodes=histograms[1]},
                 {n=G.UIT.C, config={align = "cm", padding = 0.1}, nodes=histograms[2]},
@@ -103,21 +144,65 @@ function buildCardStats_histogram(args)
 end
 
 function create_UIBox_histogram(center, stats, max_amt)
-    local card = Card(0,0, 0.5*G.CARD_W, 0.5*G.CARD_H, nil, center)
-    if center.set == "Voucher" then card.sticker = get_voucher_win_sticker(center) end
-    card.ambient_tilt = 0.8
-    local cardarea = CardArea(
-        G.ROOM.T.x + 0.2*G.ROOM.T.w/2,G.ROOM.T.h,
-        G.CARD_W*0.5,
-        G.CARD_H*0.5, 
-        {card_limit = 2, type = 'title', highlight_limit = 0})
-    cardarea:emplace(card)
+    local area = nil
+    -- tag usage page
+    if FlowerPot.GLOBAL.CARD_STATS_FILTER.object_list == G.P_TAGS then 
+        local tag = Tag(center.key, true)
+        local temp_tag_ui, temp_tag_sprite = tag:generate_UI()
+        area = {n=G.UIT.C, config={align = "cm", padding = 0.1}, nodes={ temp_tag_ui, }}
+    -- blind usage page
+    elseif FlowerPot.GLOBAL.CARD_STATS_FILTER.object_list == G.P_BLINDS then
+        local blind = AnimatedSprite(0,0,1,1, G.ANIMATION_ATLAS['blind_chips'], center.pos)
+        blind:define_draw_steps({
+          {shader = 'dissolve', shadow_height = 0.05},
+          {shader = 'dissolve'}
+        })
+        blind.float = true
+        blind.states.hover.can = true
+        blind.states.drag.can = false
+        blind.states.collide.can = true
+        blind.hover = function()
+            if not G.CONTROLLER.dragging.target or G.CONTROLLER.using_touch then 
+                if not blind.hovering and blind.states.visible then
+                    blind.hovering = true
+                    blind.hover_tilt = 3
+                    blind:juice_up(0.05, 0.02)
+                    play_sound('chips1', math.random()*0.1 + 0.55, 0.12)
+                    blind.config.h_popup = create_UIBox_blind_popup(center, true)
+                    blind.config.h_popup_config ={align = 'cl', offset = {x=-0.1,y=0},parent = blind}
+                    Node.hover(blind)
+                end
+            end
+        end
+        blind.stop_hover = function() blind.hovering = false; Node.stop_hover(blind); blind.hover_tilt = 0 end
+        blind.config = {blind = center, force_focus = true}
+        area = { n = G.UIT.O, config = { object = blind, focus_with_object = true } }
+    -- all other usage page
+    else 
+        local card = nil
+        -- for playing cards only
+        if FlowerPot.GLOBAL.CARD_STATS_FILTER.object_list == G.P_CARDS then
+            card = Card(0,0, 0.5*G.CARD_W, 0.5*G.CARD_H, G.P_CARDS[stats.key], G.P_CENTERS['c_base'], {playing_card = G.playing_card}) 
+        else
+            card = Card(0,0, 0.5*G.CARD_W, 0.5*G.CARD_H, nil, center) 
+        end
+        if center.set == "Voucher" then card.sticker = get_voucher_win_sticker(center) end
+
+        card.ambient_tilt = 0.8
+        area = CardArea(
+            G.ROOM.T.x + 0.2*G.ROOM.T.w/2,G.ROOM.T.h,
+            G.CARD_W*0.45,
+            G.CARD_H*0.45, 
+            {card_limit = 2, type = 'title', highlight_limit = 0})
+        area:emplace(card)
+        area = {n=G.UIT.O, config={object = area}}
+    end
 
     return {n=G.UIT.R, config={align = "cm",minw = 3}, nodes={
         {n=G.UIT.R, config={align = "cm", r = 0.1}, nodes={
             {n=G.UIT.C, config={align = "cm"}, nodes={
                 {n=G.UIT.R, config={align = "cm", minw = 0.5*G.CARD_W} , nodes={
-                    {n=G.UIT.O, config={object = cardarea}}
+                    area
                 }},
                 {n=G.UIT.R, config={align = "cm", padding = 0.05}, nodes={
                     {n=G.UIT.T, config={text = stats.count, scale = 0.35, colour = mix_colours(G.C.FILTER, G.C.WHITE, 0.8), shadow = true}}
@@ -125,7 +210,7 @@ function create_UIBox_histogram(center, stats, max_amt)
             }},
             {n=G.UIT.C, config={align = "cm", padding = 0.03}, nodes={
                 {n=G.UIT.R, config={align = "cm"}, nodes={
-                    {n=G.UIT.C, config={align = "cm", minw = 2*(stats.count/max_amt), minh = 0.7, colour = G.C.SECONDARY_SET[center.set] or G.C.RED, res = 0.1, r = 0.003}, nodes={}},
+                    {n=G.UIT.C, config={align = "cm", minw = 2*(stats.count/max_amt), minh = 0.7, colour = G.C.SECONDARY_SET[center.set] or G.C.BLUE, res = 0.1, r = 0.003}, nodes={}},
                     {n=G.UIT.C, config={align = "cm", minw = 2-(2*(stats.count/max_amt)), minh = 0.7, colour = darken(G.C.UI.TRANSPARENT_DARK, 0.1)}, res = 0.1, r = 0.003, nodes={}},
                 }},
             }},
@@ -139,14 +224,14 @@ G.FUNCS.card_stats_histogram_page = function(args)
 
     histogram_uibox.config.object:remove()
     histogram_uibox.config.object = UIBox{
-        definition = buildCardStats_histogram({page = args.cycle_config.current_option}),
+        definition = build_card_stats_histogram({page = args.cycle_config.current_option}),
         config = {offset = {x=0,y=0}, parent = histogram_uibox},
     }
     histogram_uibox.config.object:recalculate()
 end
 
 -- Histogram Settings
-function buildCardStats_histogram_settings(args)
+function build_card_stats_histogram_settings(args)
     local histogram_setting_tabs = {}
     if FlowerPot.GLOBAL.CARD_STATS_FILTER.consumable then 
         histogram_setting_tabs[#histogram_setting_tabs+1] = {
@@ -176,9 +261,37 @@ function buildCardStats_histogram_settings(args)
             end,
         }
     end
+    if FlowerPot.GLOBAL.CARD_STATS_FILTER.blind then 
+        histogram_setting_tabs[#histogram_setting_tabs+1] = {
+            label = localize("b_flowpot_blind_types"),
+            chosen = (FlowerPot.GLOBAL.CARD_STATS_FILTER.blind and true),
+            tab_definition_function = function() 
+                return {
+                    n = G.UIT.ROOT,
+                    config = {
+                        emboss = 0.05,
+                        minh = 6,
+                        r = 0.1,
+                        minw = 6,
+                        align = "tm",
+                        padding = 0.2,
+                        colour = G.C.CLEAR
+                    },
+                    nodes = {
+                        {n=G.UIT.O, config={id = 'stat_blind_type_uibox', object = 
+                            UIBox{
+                                definition = create_UIBox_histogram_blind_type_tab({}),
+                                config = {offset = {x=0,y=0}}
+                            }
+                        }}
+                    }
+                }
+            end,
+        }
+    end
     histogram_setting_tabs[#histogram_setting_tabs+1] = {
         label = localize("b_flowpot_stat_types"),
-        chosen = (not FlowerPot.GLOBAL.CARD_STATS_FILTER.consumable and true),
+        chosen = (not (FlowerPot.GLOBAL.CARD_STATS_FILTER.consumable or FlowerPot.GLOBAL.CARD_STATS_FILTER.blind) and true),
         tab_definition_function = function() 
             return {
                 n = G.UIT.ROOT,
@@ -322,7 +435,7 @@ function create_UIBox_histogram_consumable_type_tab(args)
     for i = 1, page == 1 and 5 or 6 do
         local selected_consumable_type = consumable_type_index[i+(6*(page-1))]
         if selected_consumable_type then 
-            local stat_group_info = FlowerPot.stat_groups[stat_group]:create_data_table()
+            local stat_group_info = FlowerPot.stat_groups[stat_group]:create_data_table() or {}
             if #stat_group_info > 0 then
                 buttons[#buttons+1] = {n=G.UIT.R, config = {align = 'cm', padding = 0.1}, nodes = {
                     UIBox_button({ label = {localize('k_'..string.lower(selected_consumable_type.stat_set))}, button = "histogram_reset_consumable_type", ref_table = {stat_group = selected_consumable_type.key, set = selected_consumable_type.stat_set}, colour = G.C.SECONDARY_SET[selected_consumable_type.stat_set] or G.C.RED, minw = 5, minh = 0.65, scale = 0.6})
@@ -354,6 +467,36 @@ G.FUNCS.histogram_reset_consumable_type = function(e)
     G.FUNCS.card_stats_histogram_page({cycle_config = args})
 end
 
+function create_UIBox_histogram_blind_type_tab(args)
+    local stat_group, _set, stat_type, mod, page = FlowerPot.GLOBAL.CARD_STATS_FILTER.stat_group, 
+        FlowerPot.GLOBAL.CARD_STATS_FILTER.set, FlowerPot.GLOBAL.CARD_STATS_FILTER.stat_type, FlowerPot.GLOBAL.CARD_STATS_FILTER.mod, args.page or 1
+    local blind_type_index = {'boss_blinds', 'final_boss_blinds'}
+
+    return {n=G.UIT.ROOT, config={align = "cm", colour = G.C.CLEAR}, nodes={
+        {n=G.UIT.C, config={align = "cm", padding = 0.05, minh = 2}, nodes={
+            {n=G.UIT.R, config={align = "cm", padding = 0.05, colour = G.C.BLACK, minh = 5.5, r = 0.1}, nodes={
+                {n=G.UIT.R, config = {align = 'cm', padding = 0.1}, nodes = {
+                    UIBox_button({ label = {localize('b_flowpot_all_blinds')}, button = "histogram_reset_blind_type", ref_table = {stat_group = "blind_usage"}, colour = G.C.RARITY[2], minw = 5, minh = 0.65, scale = 0.6}),
+                }},
+                {n=G.UIT.R, config = {align = 'cm', padding = 0.1}, nodes = {
+                    UIBox_button({ label = {localize('b_flowpot_boss_blinds')}, button = "histogram_reset_blind_type", ref_table = {stat_group = 'boss_blinds'}, colour = G.C.RARITY[3], minw = 5, minh = 0.65, scale = 0.6}),
+                }},
+                {n=G.UIT.R, config = {align = 'cm', padding = 0.1}, nodes = {
+                    UIBox_button({ label = {localize('b_flowpot_final_boss_blinds')}, button = "histogram_reset_blind_type", ref_table = {stat_group = 'final_boss_blinds'}, colour = G.C.RARITY[4], minw = 5, minh = 0.65, scale = 0.6})
+                }}
+            }}
+        }}
+    }}
+end
+
+G.FUNCS.histogram_reset_blind_type = function(e)
+    local args = e.config.ref_table
+    FlowerPot.GLOBAL.CARD_STATS_FILTER.stat_group = args.stat_group
+    FlowerPot.GLOBAL.CARD_STATS_FILTER.set = args.set
+
+    G.FUNCS.card_stats_histogram_page({cycle_config = args})
+end
+
 G.FUNCS.card_stat_consumable_type_page = function(args)
     if not args or not args.cycle_config then return end
     local stat_consumable_type_uibox = G.OVERLAY_MENU:get_UIE_by_ID('stat_consumable_type_uibox')
@@ -367,14 +510,14 @@ G.FUNCS.card_stat_consumable_type_page = function(args)
 end
 
 function create_UIBox_histogram_mods_tab(args)
-    local stat_group, _set, stat_type, mod, page = FlowerPot.GLOBAL.CARD_STATS_FILTER.stat_group, 
-        FlowerPot.GLOBAL.CARD_STATS_FILTER.set, FlowerPot.GLOBAL.CARD_STATS_FILTER.stat_type, FlowerPot.GLOBAL.CARD_STATS_FILTER.mod, args.page or 1
+    local stat_group, _set, stat_type, object_list, mod, page = FlowerPot.GLOBAL.CARD_STATS_FILTER.stat_group, 
+        FlowerPot.GLOBAL.CARD_STATS_FILTER.set, FlowerPot.GLOBAL.CARD_STATS_FILTER.stat_type, FlowerPot.GLOBAL.CARD_STATS_FILTER.object_list, FlowerPot.GLOBAL.CARD_STATS_FILTER.mod, args.page or 1
     local mods_by_index, checked_mods = {}, {}
-    local stat_group_info = FlowerPot.stat_groups[stat_group]:create_data_table()
+    local stat_group_info = FlowerPot.stat_groups[stat_group]:create_data_table() or {}
     for i, v in ipairs(stat_group_info) do
-        if G.P_CENTERS[v.key] and G.P_CENTERS[v.key].mod and G.P_CENTERS[v.key].discovered and (not _set or G.P_CENTERS[v.key].set == _set) and not checked_mods[G.P_CENTERS[v.key].mod.id] then
-            checked_mods[G.P_CENTERS[v.key].mod.id] = true
-            mods_by_index[#mods_by_index+1] = G.P_CENTERS[v.key].mod
+        if object_list[v.key] and object_list[v.key].mod and object_list[v.key].discovered and (not _set or object_list[v.key].set == _set) and not checked_mods[object_list[v.key].mod.id] then
+            checked_mods[object_list[v.key].mod.id] = true
+            mods_by_index[#mods_by_index+1] = object_list[v.key].mod
         end
     end
 

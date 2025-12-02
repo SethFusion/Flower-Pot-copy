@@ -19,6 +19,7 @@ end
 
 -- Deck Stats selector
 function buildDeckStats_selector(page)
+    FlowerPot.GLOBAL.IN_DECK_STATS_OVERVIEW = nil
     page = FlowerPot.GLOBAL.LAST_DECK_STAT_PAGE or page or 1
     ---@type UINode[]
     local back_cardareas = {
@@ -101,7 +102,7 @@ G.FUNCS.deck_stats_overview = function(deck)
 end
 
 function G.UIDEF.deck_stats_overview(deck)
-    FlowerPot.GLOBAL.IN_DECK_STATS = true
+    FlowerPot.GLOBAL.IN_DECK_STATS_OVERVIEW = true
 
     return create_UIBox_generic_options({back_func = 'deck_stats', contents ={
         {n=G.UIT.C, config = {align = "cm"}, nodes = {
@@ -112,6 +113,8 @@ end
 
 -- Individual deck overview
 function buildDeckStats_overview(deck)
+    FlowerPot.GLOBAL.IN_DECK_STATS = nil
+
     deck_stats = G.PROFILES[G.SETTINGS.profile].deck_usage[deck.key]
     if not deck_stats then
         G.PROFILES[G.SETTINGS.profile].deck_usage[deck.key] = {count = 0, order = deck.order, wins = {}, losses = {}, wins_by_key = {}, losses_by_key = {}, records = {}}
@@ -180,12 +183,12 @@ function buildDeckStats_overview(deck)
             }},
             {n=G.UIT.C, config = {align = "cm"}, nodes = {
                 {n=G.UIT.R, config = {align = "cm", padding = 0.1}, nodes = {
-                    {n=G.UIT.T, config={text = localize("b_flowpot_deck_records"), scale = 0.5, colour = G.C.UI.TEXT_LIGHT}},
+                    {n=G.UIT.T, config={text = localize("k_flowpot_deck_records"), scale = 0.5, colour = G.C.UI.TEXT_LIGHT}},
                 }},
                 {n=G.UIT.R, config = {align = "cm", colour = G.C.UI.TRANSPARENT_DARK, padding = 0.1, r = 0.1}, nodes = {
-                    create_UIBox_deck_stat_row({data = (''..total_wins).."/"..(''..total_losses), loc_key = "b_flowpot_total_wins_losses"}),
-                    create_UIBox_deck_stat_row({data = lowest_rounds, loc_key = "b_flowpot_fastest_run", loc_val = "b_flowpot_num_rounds"}),
-                    create_UIBox_deck_stat_row({data = number_format(highest_score), loc_key = "b_flowpot_highest_score"}),
+                    create_UIBox_deck_stat_row({data = (''..total_wins).."/"..(''..total_losses), loc_key = "k_flowpot_total_wins_losses"}),
+                    create_UIBox_deck_stat_row({data = lowest_rounds, loc_key = "k_flowpot_fastest_run", loc_val = "b_flowpot_num_rounds"}),
+                    create_UIBox_deck_stat_row({data = number_format(highest_score), loc_key = "k_flowpot_highest_score"}),
                 }},
             }},
             {n=G.UIT.C, config = {align = "cm"}, nodes = {
@@ -216,7 +219,7 @@ function create_UIBox_deck_stat_stickers(deck)
         rows[#rows+1] = 
         {n=G.UIT.R, config={align = "cm", padding = 0.05, r = 0.1, colour = darken(G.C.JOKER_GREY, 0.1), emboss = 0.05}, nodes={
             {n=G.UIT.C, config={align = "cm", padding = 0.05, minw = 3.5*text_scale, maxw = 3.5*text_scale}, nodes={
-                {n=G.UIT.T, config={text = localize((i == 1 and "b_flowpot_per_deck_joker" or "b_flowpot_per_deck_voucher")), scale = 0.5*text_scale, colour = G.C.UI.TEXT_LIGHT, shadow = true}},
+                {n=G.UIT.T, config={text = localize((i == 1 and "k_flowpot_per_deck_joker" or "k_flowpot_per_deck_voucher")), scale = 0.5*text_scale, colour = G.C.UI.TEXT_LIGHT, shadow = true}},
             }},
             {n=G.UIT.C, config={align = "cl", minh = 0.8, r = 0.1, minw = 3.5*text_scale, colour = G.C.BLACK, emboss = 0.05,
             progress_bar = {
@@ -279,6 +282,20 @@ function Card:hover()
             name = {}
         }
 
+        -- attempted fix at deck name showing when the deck is locked, did not work
+        --local locked_key, sub_dir = nil
+        --if not self.params.flowpot_deck_stats.unlocked then 
+        --    if self.params.flowpot_deck_stats.order < 6 then locked_key = "deck_locked_discover"
+        --    elseif self.params.flowpot_deck_stats.order < 11 then locked_key = "deck_locked_win"
+        --    elseif self.params.flowpot_deck_stats.order < 16 then locked_key = "deck_locked_stake"
+        --    else locked_key = "deck_locked_generic" end
+        --end
+        --if locked_key then sub_dir = "Other"
+        --else 
+        --    locked_key = self.params.flowpot_deck_stats.key
+        --    sub_dir = self.params.flowpot_deck_stats.set
+        --end
+
         local info_queue = {}
         local loc_target = G.localization.descriptions[self.params.flowpot_deck_stats.set][self.params.flowpot_deck_stats.key]
         for _, lines in ipairs(loc_target.text_parsed) do
@@ -330,7 +347,7 @@ end
 --- Deck click code based on Galdur's implementation
 local card_click_ref = Card.click
 function Card:click()
-    if self.params.flowpot_deck_stats and self.params.flowpot_deck_stats.unlocked then
+    if FlowerPot.GLOBAL.IN_DECK_STATS and self.params.flowpot_deck_stats and self.params.flowpot_deck_stats.unlocked then
         G.FUNCS.deck_stats_overview(self.params.flowpot_deck_stats)
     else
         card_click_ref(self)

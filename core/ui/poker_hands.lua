@@ -50,7 +50,7 @@ function create_UIBox_poker_hand_stats_row(hand_data)
         }},
         {n=G.UIT.C, config={align = "cm", padding = 0.15, r = 0.1, colour = darken(G.C.JOKER_GREY, 0.1)}, nodes={
             {n=G.UIT.C, config={align = "cm", padding = 0.05}, nodes={
-                {n=G.UIT.T, config={text = localize('b_flowpot_highest_lvl'), scale = 0.45, colour = G.C.UI.TEXT_LIGHT, shadow = true}}
+                {n=G.UIT.T, config={text = localize('k_flowpot_highest_lvl'), scale = 0.45, colour = G.C.UI.TEXT_LIGHT, shadow = true}}
             }},
             {n=G.UIT.C, config={align = "cl", padding = 0.05}, nodes={
                 {n=G.UIT.C, config={align = "cm", padding = 0.01, r = 0.1, colour = G.C.HAND_LEVELS[math.min(7, (hand_data.level or 1))], minw = 1.5, outline = 0.8, outline_colour = G.C.WHITE}, nodes={
@@ -58,7 +58,7 @@ function create_UIBox_poker_hand_stats_row(hand_data)
                 }},
             }},
             {n=G.UIT.C, config={align = "cm"}, nodes={
-                {n=G.UIT.T, config={text = localize('b_flowpot_total_played'), scale = 0.45, colour = G.C.UI.TEXT_LIGHT, shadow = true}}
+                {n=G.UIT.T, config={text = localize('k_flowpot_total_played'), scale = 0.45, colour = G.C.UI.TEXT_LIGHT, shadow = true}}
             }},
             {n=G.UIT.C, config={align = "cm", padding = 0.1, colour = G.C.L_BLACK,r = 0.1, minw = 0.9}, nodes={
                 {n=G.UIT.T, config={text = hand_data.count, scale = 0.45, colour = G.C.FILTER, shadow = true}},

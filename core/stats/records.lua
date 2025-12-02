@@ -157,7 +157,7 @@ end
 -- xmult
 FlowerPot.rev_lookup_records["j_stencil"].check_record = function(self, card)
     if next(SMODS.find_card('j_stencil', true)) then 
-        return card.ability.extra.x_mult
+        return card.ability.x_mult
     end
     return 0
 end
@@ -221,3 +221,67 @@ function Card:calculate_joker(context)
     end
     return ret, callback
 end
+
+
+FlowerPot.add_career_record("c_wins", G.C.BLUE)
+FlowerPot.add_career_record("c_losses", G.C.RED)
+FlowerPot.add_career_record("c_win_rate", G.C.IMPORTANT, function() 
+    return (G.PROFILES[G.SETTINGS.profile].career_stats["c_wins"] / (G.PROFILES[G.SETTINGS.profile].career_stats["c_wins"] + G.PROFILES[G.SETTINGS.profile].career_stats["c_losses"])) or 0, "number" 
+end)
+FlowerPot.add_career_record("c_rounds")
+FlowerPot.add_career_record("c_hands_played")
+FlowerPot.add_career_record("c_cards_played")
+FlowerPot.add_career_record("c_face_cards_played")
+FlowerPot.add_career_record("c_cards_discarded")
+
+FlowerPot.add_career_record("c_dollars_earned", nil, "money")
+FlowerPot.add_career_record("c_lucky_money_total", nil, "money")
+FlowerPot.add_career_record("c_vouchers_bought")
+FlowerPot.add_career_record("c_shop_dollars_spent", nil, "money")
+FlowerPot.add_career_record("c_shop_rerolls", G.C.GREEN)
+FlowerPot.add_career_record("c_cards_sold", G.C.JOKER_GREY)
+FlowerPot.add_career_record("c_jokers_sold", G.C.JOKER_GREY)
+FlowerPot.add_career_record("c_playing_cards_bought", G.C.ORANGE)
+--pg1
+FlowerPot.add_career_record("c_tarot_cards_used", G.C.SECONDARY_SET.Tarot)
+FlowerPot.add_career_record("c_tarots_bought", G.C.SECONDARY_SET.Tarot)
+FlowerPot.add_career_record("c_tarot_reading_used", G.C.SECONDARY_SET.Tarot)
+FlowerPot.add_career_record("c_tarot_reading_bought", G.C.SECONDARY_SET.Tarot)
+FlowerPot.add_career_record("c_planet_cards_used", G.C.SECONDARY_SET.Planet)
+FlowerPot.add_career_record("c_planets_bought", G.C.SECONDARY_SET.Planet)
+FlowerPot.add_career_record("c_planetarium_used", G.C.SECONDARY_SET.Planet)
+FlowerPot.add_career_record("c_planetarium_bought", G.C.SECONDARY_SET.Planet)
+
+FlowerPot.add_career_record("c_spectral_cards_used", G.C.SECONDARY_SET.Spectral)
+FlowerPot.add_career_record("c_spectral_bought", G.C.SECONDARY_SET.Spectral)
+FlowerPot.add_career_record("c_ethereal_used", G.C.SECONDARY_SET.Spectral)
+FlowerPot.add_career_record("c_ethereal_bought", G.C.SECONDARY_SET.Spectral)
+FlowerPot.add_career_record("c_standard_used", G.C.ORANGE)
+FlowerPot.add_career_record("c_standard_bought", G.C.ORANGE)
+FlowerPot.add_career_record("c_buffoon_used", G.C.SECONDARY_SET.Voucher)
+FlowerPot.add_career_record("c_buffoon_bought", G.C.SECONDARY_SET.Voucher)
+--pg2
+
+
+--FlowerPot.add_career_record("c_boosters_bought")
+--FlowerPot.add_career_record("c_boosters_used", G.C.SECONDARY_SET.Voucher)
+
+
+FlowerPot.add_career_record("c_wheel_bless_count", G.C.IMPORTANT)
+FlowerPot.add_career_record("c_wheel_nope_count", G.C.IMPORTANT)
+FlowerPot.add_career_record("c_single_hand_round_streak")
+FlowerPot.add_career_record("c_round_interest_cap_streak")
+FlowerPot.add_career_record("c_tags_used")
+FlowerPot.add_career_record("c_largest_deck", G.C.IMPORTANT, function() 
+    return G.PROFILES[G.SETTINGS.profile].high_scores["largest_deck"].amt, "number" 
+end)
+FlowerPot.add_career_record("c_smallest_deck", G.C.IMPORTANT, function() 
+    return G.PROFILES[G.SETTINGS.profile].high_scores["smallest_deck"].amt, "number" 
+end)
+FlowerPot.add_career_record("c_largest_debt", G.C.RED, function() 
+    return G.PROFILES[G.SETTINGS.profile].high_scores["largest_debt"].amt, "money" 
+end)
+
+--pg3
+--FlowerPot.add_career_record("c_string_test", nil, "string") 
+--FlowerPot.add_career_record("c_blank_row", nil, "blank")

@@ -79,6 +79,23 @@ function check_and_set_high_score(score, amt)
     end
 end
 
+function check_and_set_low_score(score, amt)
+    if not amt or type(amt) ~= 'number' then return end
+    if G.GAME.round_scores[score] and math.floor(amt) < G.GAME.round_scores[score].amt then
+      G.GAME.round_scores[score].amt = math.floor(amt)
+    end
+    if  G.GAME.seeded  then return end
+    if score == 'hand' and G.SETTINGS.COMP and ((not G.SETTINGS.COMP.score) or (G.SETTINGS.COMP.score > math.floor(amt))) then 
+      G.SETTINGS.COMP.score = amt
+      send_score(math.floor(amt))
+    end
+    if G.PROFILES[G.SETTINGS.profile].high_scores[score] and math.floor(amt) < G.PROFILES[G.SETTINGS.profile].high_scores[score].amt then
+      if G.GAME.round_scores[score] then G.GAME.round_scores[score].high_score = true end
+      G.PROFILES[G.SETTINGS.profile].high_scores[score].amt = math.floor(amt)
+      G:save_settings()
+    end
+end
+
 local set_joker_win_ref = set_joker_win
 function set_joker_win()
     set_joker_win_ref()
@@ -143,6 +160,36 @@ function set_deck_rounds()
         end
         G:save_settings()
     end
+end
+
+function set_tag_usage(tag)
+  if not tag then return end
+  G.PROFILES[G.SETTINGS.profile].tag_usage[tag.key] = G.PROFILES[G.SETTINGS.profile].tag_usage[tag.key] or {count = 0}
+  G.PROFILES[G.SETTINGS.profile].tag_usage[tag.key].count = G.PROFILES[G.SETTINGS.profile].tag_usage[tag.key].count + 1
+  G:save_settings()
+end
+
+function set_blind_usage(blind, win)
+  local blind_real = blind.config.blind
+  if not blind_real then return end
+  G.PROFILES[G.SETTINGS.profile].blind_usage[blind_real.key] = G.PROFILES[G.SETTINGS.profile].blind_usage[blind_real.key] or {count = 0, wins = 0, losses = 0}
+  G.PROFILES[G.SETTINGS.profile].blind_usage[blind_real.key].count = G.PROFILES[G.SETTINGS.profile].blind_usage[blind_real.key].count + 1
+  if (win) then
+    G.PROFILES[G.SETTINGS.profile].blind_usage[blind_real.key].wins = G.PROFILES[G.SETTINGS.profile].blind_usage[blind_real.key].wins + 1
+  else
+    G.PROFILES[G.SETTINGS.profile].blind_usage[blind_real.key].losses = G.PROFILES[G.SETTINGS.profile].blind_usage[blind_real.key].losses + 1
+  end
+  G:save_settings()
+end
+
+function set_card_usage(card, type)
+  if not card then return end
+  G.PROFILES[G.SETTINGS.profile].card_usage[card.config.card_key] = G.PROFILES[G.SETTINGS.profile].card_usage[card.config.card_key] or {count = 0, destroyed = 0}
+  if type == 'scored' then
+    G.PROFILES[G.SETTINGS.profile].card_usage[card.config.card_key].count = G.PROFILES[G.SETTINGS.profile].card_usage[card.config.card_key].count + 1
+  elseif type == 'destroyed' then
+    G.PROFILES[G.SETTINGS.profile].card_usage[card.config.card_key].destroyed = G.PROFILES[G.SETTINGS.profile].card_usage[card.config.card_key].destroyed + 1
+  end
 end
 
 -- Poker Hand Level Tracking
