@@ -64,7 +64,7 @@ if seed == 'wheel_of_fortune' then
 end
 -- / flower_patch'''
 
-# patch lucky card to count total money earned
+# patch lucky card to count total money earned w/ SMODS
 [[patches]]
 [patches.pattern]
 target = 'card.lua'
@@ -75,12 +75,34 @@ payload = '''   -- flower_patch
 	inc_career_stat('c_lucky_money_total', self.ability.p_dollars)
     -- / flower_patch'''
 
-# patch to remove booster bought increment from only triggering if booster was not skipped
+# patch lucky card to count total money earned without SMODS
+[[patches]]
+[patches.pattern]
+target = 'card.lua'
+pattern = '''if pseudorandom('lucky_money') < G.GAME.probabilities.normal/15 then'''
+position = 'after'
+match_indent = true
+payload = '''   -- flower_patch
+	inc_career_stat('c_lucky_money_total', self.ability.p_dollars)
+    -- / flower_patch'''
+
+# patch to remove booster bought increment from only triggering if booster was not skipped w/ SMODS
 [[patches]]
 [patches.pattern]
 target = 'functions/button_callbacks.lua'
 pattern = '''if prev_state == G.STATES.SMODS_BOOSTER_OPENED and booster_obj.name:find('Arcana') then inc_career_stat('c_tarot_reading_used', 1) end
                       if prev_state == G.STATES.SMODS_BOOSTER_OPENED and booster_obj.name:find('Celestial') then inc_career_stat('c_planetarium_used', 1) end'''
+position = 'at'
+match_indent = true
+payload = '''-- flower_patch
+-- / flower_patch'''
+
+# patch to remove booster bought increment from only triggering if booster was not skipped without SMODS
+[[patches]]
+[patches.pattern]
+target = 'functions/button_callbacks.lua'
+pattern = '''if prev_state == G.STATES.TAROT_PACK then inc_career_stat('c_tarot_reading_used', 1) end
+                      if prev_state == G.STATES.PLANET_PACK then inc_career_stat('c_planetarium_used', 1) end'''
 position = 'at'
 match_indent = true
 payload = '''-- flower_patch
@@ -293,6 +315,19 @@ end
 '''
 match_indent = true
 
+# Patch for Space Joker without SMODS
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''if self.ability.name == 'Space Joker' and pseudorandom('space') < G.GAME.probabilities.normal/self.ability.extra then'''
+position = "after"
+payload = '''
+    G.GAME.FLOWPOT = G.GAME.FLOWPOT or {}
+    G.GAME.FLOWPOT.space_joker_levels = (G.GAME.FLOWPOT.space_joker_levels or 0) + 1
+'''
+match_indent = true
+
+# Patch for Space Joker with SMODS
 [[patches]]
 [patches.pattern]
 target = "card.lua"

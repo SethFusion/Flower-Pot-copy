@@ -7,7 +7,6 @@
   "author": ["ItsFlowwey"],
   "main_file": "Flower Pot.lua",
   "dependencies": [
-    "Steamodded (>=1.0.0~BETA-1016c)",
     "Lovely (>=0.7.1)"
   ],
   "website_url": "https://github.com/GauntletGames-2086/Flower-Pot"

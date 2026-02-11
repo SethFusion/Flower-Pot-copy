@@ -110,13 +110,13 @@ FlowerPot.addRecord({
 -- Edits to above records for specific jokers
 -- chips
 FlowerPot.rev_lookup_records["j_bull"].check_record = function(self, card)
-    if next(SMODS.find_card('j_bull', true)) then 
+    if next(FlowerPot.find_card('j_bull', true)) then 
         return card.ability.extra*math.max(0,(to_number(G.GAME and G.GAME.dollars) + (G.GAME and G.GAME.dollar_buffer or 0)))
     end
     return 0
 end
 FlowerPot.rev_lookup_records["j_stone"].check_record = function(self, card)
-    if next(SMODS.find_card('j_stone', true)) then 
+    if next(FlowerPot.find_card('j_stone', true)) then 
         return card.ability.extra*(card.ability.stone_tally or 0)
     end
     return 0
@@ -124,31 +124,31 @@ end
 
 -- mult
 FlowerPot.rev_lookup_records["j_fortune_teller"].check_record = function(self, card)
-    if next(SMODS.find_card('j_fortune_teller', true)) then 
+    if next(FlowerPot.find_card('j_fortune_teller', true)) then 
         return (G.GAME and G.GAME.consumeable_usage_total or {}).tarot
     end
     return 0
 end
 FlowerPot.rev_lookup_records["j_bootstraps"].check_record = function(self, card)
-    if next(SMODS.find_card('j_bootstraps', true)) then 
+    if next(FlowerPot.find_card('j_bootstraps', true)) then 
         return card.ability.extra.mult*math.floor((to_number(G.GAME.dollars) + (G.GAME.dollar_buffer or 0))/card.ability.extra.dollars)
     end
     return 0
 end
 FlowerPot.rev_lookup_records["j_abstract"].check_record = function(self, card)
-    if next(SMODS.find_card('j_abstract', true)) then 
+    if next(FlowerPot.find_card('j_abstract', true)) then 
         return (G.jokers and #G.jokers.cards or 0)*card.ability.extra
     end
     return 0
 end
 FlowerPot.rev_lookup_records["j_erosion"].check_record = function(self, card)
-    if next(SMODS.find_card('j_erosion', true)) then 
+    if next(FlowerPot.find_card('j_erosion', true)) then 
         return math.max(0,card.ability.extra*(G.playing_cards and (G.GAME.starting_deck_size - #G.playing_cards) or 0))
     end
     return 0
 end
 FlowerPot.rev_lookup_records["j_swashbuckler"].check_record = function(self, card)
-    if next(SMODS.find_card('j_swashbuckler', true)) then 
+    if next(FlowerPot.find_card('j_swashbuckler', true)) then 
         return card.ability.mult
     end
     return 0
@@ -156,13 +156,13 @@ end
 
 -- xmult
 FlowerPot.rev_lookup_records["j_stencil"].check_record = function(self, card)
-    if next(SMODS.find_card('j_stencil', true)) then 
+    if next(FlowerPot.find_card('j_stencil', true)) then 
         return card.ability.x_mult
     end
     return 0
 end
 FlowerPot.rev_lookup_records["j_throwback"].check_record = function(self, card)
-    if next(SMODS.find_card('j_throwback', true)) then 
+    if next(FlowerPot.find_card('j_throwback', true)) then 
         return card.ability.x_mult
     end
     return 0
@@ -182,7 +182,7 @@ FlowerPot.rev_lookup_records["j_rocket"].check_record = function(self, card)
 end
 FlowerPot.rev_lookup_records["j_cloud_9"].default = 4
 FlowerPot.rev_lookup_records["j_cloud_9"].check_record = function(self, card)
-    if next(SMODS.find_card('j_cloud_9', true)) then 
+    if next(FlowerPot.find_card('j_cloud_9', true)) then 
         return card.ability.extra*(card.ability.nine_tally or 0)
     end
     return 0
@@ -266,9 +266,11 @@ FlowerPot.add_career_record("c_buffoon_bought", G.C.SECONDARY_SET.Voucher)
 --FlowerPot.add_career_record("c_boosters_bought")
 --FlowerPot.add_career_record("c_boosters_used", G.C.SECONDARY_SET.Voucher)
 
-
-FlowerPot.add_career_record("c_wheel_bless_count", G.C.IMPORTANT)
-FlowerPot.add_career_record("c_wheel_nope_count", G.C.IMPORTANT)
+-- wheel of fortune stat requires SMODS for clean implementation
+if (SMODS and SMODS.can_load) then
+    FlowerPot.add_career_record("c_wheel_bless_count", G.C.IMPORTANT)
+    FlowerPot.add_career_record("c_wheel_nope_count", G.C.IMPORTANT)
+end
 FlowerPot.add_career_record("c_single_hand_round_streak")
 FlowerPot.add_career_record("c_round_interest_cap_streak")
 FlowerPot.add_career_record("c_tags_used")

@@ -198,3 +198,27 @@ if not (SMODS and SMODS.can_load) then
         return string.format("%q", s)
     end
 end
+
+-- copy of SMODS.find_card(), which is more accurate than find_joker() because it searches by key
+function FlowerPot.find_card(key, count_debuffed)
+    local function get_card_areas_local(_type, _context)
+        if _type == 'jokers' then
+            local t = {G.jokers, G.consumeables, G.vouchers}
+            return t
+        end
+        return {}
+    end
+
+    local results = {}
+    if not G.jokers or not G.jokers.cards then return {} end
+    for _, area in ipairs(get_card_areas_local('jokers')) do
+        if area.cards then
+            for _, v in pairs(area.cards) do
+                if v and type(v) == 'table' and v.config.center.key == key and (count_debuffed or not v.debuff) then
+                    table.insert(results, v)
+                end
+            end
+        end
+    end
+    return results
+end
